@@ -23,7 +23,10 @@ import {
   Instagram,
   Video,
   Youtube,
-  Smartphone
+  Smartphone,
+  Download,
+  Moon,
+  Sun
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../utils';
@@ -40,12 +43,55 @@ export default function InfluencerDiscovery() {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<SuggestedInfluencer[]>([]);
   const [statusMessage, setStatusMessage] = useState('Initializing search relays...');
+  const [isDarkMode, setIsDarkMode] = useState(document.documentElement.classList.contains('dark'));
   const [criteria, setCriteria] = useState({
     country: 'Saudi Arabia',
     niche: 'Luxury Lifestyle',
     range: '100k-500k',
-    count: 6
+    count: 20
   });
+
+  const toggleTheme = () => {
+    if (isDarkMode) {
+      document.documentElement.classList.remove('dark');
+      setIsDarkMode(false);
+    } else {
+      document.documentElement.classList.add('dark');
+      setIsDarkMode(true);
+    }
+  };
+
+  const handleExport = () => {
+    if (results.length === 0) {
+      alert("No data to export. Please run a discovery search first.");
+      return;
+    }
+    const headers = ['Handle', 'Platform', 'Niche', 'Followers', 'Engagement', 'Location', 'Relevance'];
+    const csvRows = [headers.join(',')];
+    
+    for (const r of results) {
+      const values = [
+        r.handle,
+        r.platform,
+        r.niche,
+        r.followers,
+        r.engagement,
+        `"${r.location.replace(/"/g, '""')}"`,
+        `"${r.relevanceReason.replace(/"/g, '""')}"`
+      ];
+      csvRows.push(values.join(','));
+    }
+    
+    const csvString = csvRows.join('\n');
+    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `discovery_export_${new Date().getTime()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const loadingSteps = [
     'Initializing Multi-Modal Search Grounding...',
@@ -88,6 +134,24 @@ export default function InfluencerDiscovery() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-8 pb-32 animate-in fade-in duration-700">
+      {/* Utility Bar */}
+      <div className="flex justify-end gap-3 mb-[-1rem]">
+         <button 
+           onClick={handleExport}
+           className="btn-primary !py-2 !px-4 !text-[10px] flex items-center gap-2 bg-[var(--ink-900)] text-white hover:bg-[var(--gc-purple)] disabled:opacity-50"
+           disabled={results.length === 0}
+         >
+           <Download size={14} /> Export CSV
+         </button>
+         <button 
+           onClick={toggleTheme}
+           className="btn-primary !py-2 !px-4 !text-[10px] flex items-center gap-2 bg-[var(--ink-900)] text-white hover:bg-[var(--gc-purple)]"
+         >
+           {isDarkMode ? <Sun size={14} /> : <Moon size={14} />} 
+           {isDarkMode ? 'Light Mode' : 'Dark Mode'}
+         </button>
+      </div>
+
       {/* Immersive Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-slate-900 p-10 rounded-[2rem] border border-slate-800 shadow-2xl relative overflow-hidden group">
         <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none group-hover:opacity-10 transition-opacity">
@@ -182,18 +246,18 @@ export default function InfluencerDiscovery() {
 
               <div className="space-y-2">
                  <label className="data-label flex items-center gap-2 font-black"><Layers size={14} className="text-slate-400"/> Extraction Density</label>
-                 <div className="flex items-center gap-4 py-2">
-                    {[3, 6, 9].map(num => (
+                 <div className="flex items-center gap-2 py-2">
+                    {[10, 20, 30].map(num => (
                       <button 
                         key={num}
                         type="button"
                         onClick={() => setCriteria({...criteria, count: num})}
                         className={cn(
-                          "flex-1 py-1 text-[10px] font-black rounded-lg border transition-all",
+                          "flex-1 py-1.5 text-[10px] font-black rounded-lg border transition-all",
                           criteria.count === num ? "bg-slate-900 text-white border-slate-900" : "bg-white text-slate-400 border-slate-100 hover:bg-slate-50"
                         )}
                       >
-                         {num}
+                         MAX {num}
                       </button>
                     ))}
                  </div>

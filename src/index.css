@@ -1,10 +1,34 @@
-@import url('https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
+  --color-gc-orange: #E8630C;
+  --color-gc-purple: #52358C;
+  --color-gc-lavender: #A798BF;
+  --color-gc-peach: #E3A579;
+  --color-gc-orange-soft: #FDF2E9;
+  --color-gc-purple-soft: #EEEAF4;
+  --color-gc-lavender-soft: #F3EFF8;
+  --color-gc-peach-soft: #FCF1E9;
+  
+  --color-ink-900: #1A1220;
+  --color-ink-700: #433651;
+  --color-ink-500: #6B5E78;
+  --color-ink-300: #A89FB0;
+  --color-ink-100: #E8E3EC;
+  
+  --color-bg-light: #FBFAFC;
+  --color-border-subtle: #EEE9F1;
+  --color-border-strong: #DCD4E2;
+  
   --font-sans: "Mulish", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Barlow Condensed", sans-serif;
+  --font-display: "Barlow Condensed", "Mulish", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
+  
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
 }
 
 :root {
@@ -14,16 +38,53 @@
   --gc-peach: #E3A579;
   --gc-orange-soft: #FDF2E9;
   --gc-purple-soft: #EEEAF4;
+  --gc-lavender-soft: #F3EFF8;
+  --gc-peach-soft: #FCF1E9;
+  --gc-orange-mid: rgba(232,99,12,0.12);
+  --gc-purple-mid: rgba(82,53,140,0.08);
+  
   --ink-900: #1A1220;
   --ink-700: #433651;
-  --bg: #FBFAFC;
-  --border: #EEE9F1;
+  --ink-500: #6B5E78;
+  --ink-300: #A89FB0;
+  --ink-100: #E8E3EC;
   
-  /* Generic Aliases */
-  --accent: var(--gc-orange);
-  --accent-secondary: var(--gc-purple);
-  --success: #2E9E57;
-  --danger: #D83A35;
+  --bg: #FBFAFC;
+  --white: #FFFFFF;
+  --border: #EEE9F1;
+  --border-strong: #DCD4E2;
+  
+  --success: #0F8A4B;
+  --danger: #B42318;
+  --danger-soft: #FEF3F2;
+  
+  --shadow-sm: 0 1px 3px rgba(82,53,140,0.06);
+  --shadow: 0 4px 20px rgba(82,53,140,0.08);
+  --shadow-lg: 0 16px 48px rgba(82,53,140,0.12);
+}
+
+:root.dark {
+  --gc-orange-soft: rgba(232,99,12,0.15);
+  --gc-purple-soft: rgba(167,152,191,0.10);
+  --gc-lavender-soft: rgba(167,152,191,0.15);
+  --gc-peach-soft: rgba(227,165,121,0.15);
+  --gc-orange-mid: rgba(232,99,12,0.25);
+  --gc-purple-mid: rgba(167,152,191,0.25);
+  
+  --ink-900: #FBFAFC;
+  --ink-700: #DCD4E2;
+  --ink-500: #A89FB0;
+  --ink-300: #6B5E78;
+  --ink-100: #433651;
+  
+  --bg: #120C17;
+  --white: #1A1220;
+  --border: #433651;
+  --border-strong: #6B5E78;
+  
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+  --shadow: 0 4px 20px rgba(0,0,0,0.5);
+  --shadow-lg: 0 16px 48px rgba(0,0,0,0.6);
 }
 
 @layer base {
@@ -34,30 +95,42 @@
 
 @layer components {
   .command-card {
-    @apply bg-white border border-[var(--border)] rounded-2xl shadow-[0_4px_20px_rgba(82,53,140,0.04)] overflow-hidden transition-all hover:shadow-[0_8px_30px_rgba(82,53,140,0.08)];
+    @apply bg-white border border-[var(--border)] rounded-[var(--radius-xl)] shadow-[var(--shadow-sm)] overflow-hidden transition-all hover:shadow-[var(--shadow)];
+  }
+  
+  .section-kicker {
+    @apply inline-flex items-center gap-2 font-display font-bold text-[11.5px] tracking-[2.5px] uppercase text-[var(--gc-orange)] mb-2.5;
+  }
+  .section-kicker::before {
+    content: '';
+    @apply w-6 h-[2px] bg-[var(--gc-orange)] inline-block;
   }
   
   .section-title {
-    @apply font-display font-black uppercase tracking-tight text-[var(--ink-900)];
+    @apply font-display font-black text-3xl md:text-4xl tracking-tight text-[var(--ink-900)] mb-2;
+  }
+  
+  .section-sub {
+    @apply text-[var(--ink-700)] text-[0.97rem] leading-relaxed max-w-[860px];
   }
 
   .data-label {
-    @apply text-[10px] font-display font-bold uppercase tracking-[0.15em] text-[var(--ink-500)] mb-1;
+    @apply text-[11px] font-display font-bold uppercase tracking-[0.15em] text-[var(--ink-500)] mb-1;
   }
 
   .stage-tag {
-    @apply px-2 py-1 rounded-full text-[10px] font-display font-extrabold uppercase tracking-wider;
+    @apply px-3 py-1.5 rounded-full text-[10px] font-display font-extrabold uppercase tracking-[0.2em];
   }
 
   .btn-primary {
-    @apply bg-[var(--gc-orange)] text-white px-4 py-2 rounded-xl font-display font-bold uppercase tracking-wider hover:opacity-90 transition-all shadow-md;
+    @apply bg-[var(--gc-orange)] text-white px-5 py-3 rounded-full font-display font-extrabold uppercase tracking-widest hover:opacity-90 transition-all shadow-md;
   }
 
   .grid-header-cell {
-    @apply px-6 py-4 bg-[#fcfbfe] border-b border-[var(--border)] text-[11px] font-display font-bold uppercase text-[var(--ink-500)] tracking-widest;
+    @apply px-6 py-4 bg-[var(--bg)] border-b border-[var(--border)] text-[11px] font-display font-bold uppercase text-[var(--ink-500)] tracking-widest;
   }
 
   .grid-row-cell {
-    @apply px-6 py-4 border-b border-[var(--border)] bg-white group-hover:bg-[#faf8fd] transition-colors;
+    @apply px-6 py-4 border-b border-[var(--border)] bg-white group-hover:bg-[var(--bg)] transition-colors;
   }
 }

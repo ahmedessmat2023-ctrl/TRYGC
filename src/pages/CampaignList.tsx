@@ -52,27 +52,28 @@ export default function CampaignList() {
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="flex justify-between items-end">
+    <div className="max-w-[1240px] mx-auto space-y-8 animate-in fade-in duration-500">
+      <div className="flex justify-between items-end mb-10">
         <div>
-          <h2 className="section-title text-4xl">Campaign Registry</h2>
-          <p className="text-[var(--ink-700)] flex items-center gap-2 mt-1">
-            <Activity size={14} className="text-[var(--gc-orange)]" />
-            Centralized hub for all 18-stage campaign lifecycle operations.
+          <div className="section-kicker">Operations Core</div>
+          <h2 className="section-title">Campaign Registry</h2>
+          <p className="text-[var(--ink-700)] flex items-center gap-2 mt-2 font-mono text-[13px]">
+            <Activity size={16} className="text-[var(--gc-orange)]" />
+            Centralized hub for all <span className="font-bold text-[var(--ink-900)]">18-stage</span> campaign lifecycle operations.
           </p>
         </div>
-        <button className="btn-primary flex items-center gap-2">
-          <Plus size={18} /> New Campaign
+        <button className="btn-primary flex items-center gap-2 shadow-[var(--shadow-sm)]">
+          <Plus strokeWidth={3} size={16} /> New Campaign
         </button>
       </div>
 
       {/* Stage Filter Chips */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <p className="text-[10px] font-display font-black uppercase tracking-widest text-slate-400">Lifecycle Phase Filter</p>
+          <p className="text-[11px] font-display font-black uppercase tracking-[1.5px] text-[var(--ink-500)]">Lifecycle Phase Filter</p>
           <button 
             onClick={() => setSelectedStage('all')}
-            className="text-[10px] font-display font-black uppercase text-[var(--gc-orange)] hover:underline"
+            className="text-[11px] font-display font-black uppercase tracking-widest text-[var(--gc-orange)] hover:text-[#D14F1C] transition-colors"
           >
             Clear All Filters
           </button>
@@ -81,10 +82,10 @@ export default function CampaignList() {
           <button
             onClick={() => setSelectedStage('all')}
             className={cn(
-              "px-4 py-2 rounded-xl text-[10px] font-display font-black uppercase tracking-widest transition-all border",
+              "px-5 py-2.5 rounded-full text-[10.5px] font-display font-black uppercase tracking-widest transition-all border",
               selectedStage === 'all' 
-                ? "bg-[var(--gc-purple)] text-white border-[var(--gc-purple)] shadow-lg" 
-                : "bg-white text-slate-500 border-[var(--border)] hover:bg-slate-50"
+                ? "bg-[var(--gc-purple)] text-white border-[var(--gc-purple)] shadow-[var(--shadow-md)] shadow-purple-900/10" 
+                : "bg-white text-[var(--ink-500)] border-[var(--border)] hover:bg-[var(--bg)] hover:text-[var(--ink-700)]"
             )}
           >
             All Stages
@@ -94,10 +95,10 @@ export default function CampaignList() {
               key={stage}
               onClick={() => setSelectedStage(Number(stage))}
               className={cn(
-                "px-4 py-2 rounded-xl text-[10px] font-display font-black uppercase tracking-widest transition-all border",
+                "px-5 py-2.5 rounded-full text-[10.5px] font-display font-black uppercase tracking-widest transition-all border",
                 selectedStage === Number(stage)
-                  ? "bg-[var(--gc-orange)] text-white border-[var(--gc-orange)] shadow-lg"
-                  : "bg-white text-slate-500 border-[var(--border)] hover:bg-slate-50"
+                  ? "bg-[var(--gc-orange)] text-white border-[var(--gc-orange)] shadow-[var(--shadow-md)] shadow-orange-900/10"
+                  : "bg-white text-[var(--ink-500)] border-[var(--border)] hover:bg-[var(--bg)] hover:text-[var(--ink-700)] hover:border-[var(--ink-300)]"
               )}
             >
               {stage}. {name.split('–')[0].split('/')[0].trim()}
@@ -107,20 +108,20 @@ export default function CampaignList() {
       </div>
 
       {/* Campaign List */}
-      <div className="command-card bg-white">
-        <div className="p-4 border-b border-[var(--border)] flex items-center gap-4">
-           <Search size={18} className="text-slate-400" />
-           <input 
-             className="flex-1 text-sm outline-none font-medium" 
-             placeholder="Filter by brand, client, or reference ID..." 
-             value={searchQuery}
-             onChange={(e) => setSearchQuery(e.target.value)}
-           />
-           <div className="flex gap-2">
-             <button className="flex items-center gap-2 px-4 py-2 border border-slate-100 rounded-xl text-xs font-bold text-slate-500 bg-slate-50">
-                <Filter size={14} /> Refine
-             </button>
+      <div className="command-card">
+        <div className="p-6 border-b border-[var(--border)] flex items-center justify-between bg-[var(--bg)]">
+           <div className="relative w-[380px]">
+             <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--ink-300)]" />
+             <input 
+               className="w-full pl-12 pr-4 py-3 text-sm outline-none font-medium bg-white border border-[var(--border)] rounded-full focus:border-[var(--gc-purple)] focus:ring-[4px] focus:ring-[var(--gc-purple-mid)] transition-all" 
+               placeholder="Filter by brand, client, or reference ID..." 
+               value={searchQuery}
+               onChange={(e) => setSearchQuery(e.target.value)}
+             />
            </div>
+           <button className="flex items-center gap-2 px-5 py-3 border border-[var(--border)] rounded-full text-[12px] font-display font-bold uppercase tracking-widest text-[var(--ink-700)] bg-white hover:bg-[var(--bg)] hover:border-[var(--border-strong)] transition-all">
+              <Filter strokeWidth={2.5} size={16} /> Refine
+           </button>
         </div>
 
         <div className="overflow-x-auto">
@@ -138,57 +139,57 @@ export default function CampaignList() {
             <tbody className="divide-y divide-[var(--border)]">
               {filteredCampaigns.length > 0 ? (
                 filteredCampaigns.map((campaign) => (
-                  <tr key={campaign.id} className="group hover:bg-[var(--gc-purple-soft)]/20 transition-all cursor-default">
-                    <td className="grid-row-cell">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-[var(--gc-orange-soft)] text-[var(--gc-orange)] flex items-center justify-center font-display font-black">
+                  <tr key={campaign.id} className="grid-row-cell group hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(0,0,0,0.02)] transition-all cursor-default bg-white z-0 hover:z-10 relative">
+                    <td className="px-6 py-4 border-b border-[var(--border)]">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-full bg-[var(--gc-orange-soft)] border border-[var(--gc-orange)]/20 text-[var(--gc-orange)] flex items-center justify-center font-display font-black shadow-sm">
                           {campaign.name?.substring(0, 2).toUpperCase()}
                         </div>
                         <div>
                           <input 
-                            className="text-sm font-bold text-slate-900 bg-transparent border-none outline-none focus:ring-2 focus:ring-[var(--gc-orange-soft)] rounded px-1 -mx-1"
+                            className="text-[15px] font-bold text-[var(--ink-900)] bg-transparent border-none outline-none focus:ring-[2px] focus:ring-[var(--gc-orange-soft)] rounded px-2 -mx-2 transition-all block w-full"
                             value={campaign.name}
                             onChange={(e) => {
                               const updated = dataService.updateCampaign(campaign.id, { name: e.target.value });
                               setCampaigns(updated);
                             }}
                           />
-                          <p className="text-[10px] text-slate-400 font-mono mt-1">{campaign.id} · {campaign.city}</p>
+                          <p className="text-[11px] text-[var(--ink-500)] font-mono mt-1 tracking-wider uppercase pl-1">{campaign.id} · {campaign.city}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="grid-row-cell min-w-[220px]">
-                       <div className="space-y-1.5">
+                    <td className="px-6 py-4 border-b border-[var(--border)] min-w-[240px]">
+                       <div className="space-y-2.5">
                           <select 
                             value={campaign.stage}
                             onChange={(e) => handleUpdateStage(campaign.id, Number(e.target.value))}
-                            className="stage-tag bg-[var(--gc-purple-soft)] text-[var(--gc-purple)] border-none outline-none appearance-none cursor-pointer hover:bg-[var(--gc-purple)] hover:text-white transition-colors"
+                            className="w-full stage-tag bg-[var(--bg)] border border-[var(--border)] text-[var(--ink-900)] outline-none appearance-none cursor-pointer hover:bg-[var(--gc-purple)] hover:border-[var(--gc-purple)] hover:text-white transition-colors"
                           >
                             {Object.entries(STAGE_NAMES).map(([s, n]) => (
                               <option key={s} value={s}>{s}. {n}</option>
                             ))}
                           </select>
-                          <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
-                             <div className="h-full bg-[var(--gc-purple)]" style={{ width: `${((campaign.stage || 1) / 18) * 100}%` }} />
+                          <div className="h-1.5 w-full bg-[var(--bg)] rounded-full overflow-hidden border border-[var(--border)]">
+                             <div className="h-full bg-[var(--gc-purple)] transition-all duration-700 ease-out" style={{ width: `${((campaign.stage || 1) / 18) * 100}%` }} />
                           </div>
                        </div>
                     </td>
-                    <td className="grid-row-cell text-center">
+                    <td className="px-6 py-4 border-b border-[var(--border)] text-center">
                        <select 
                          value={campaign.status}
                          onChange={(e) => handleUpdateStatus(campaign.id, e.target.value as any)}
                          className={cn(
-                           "text-[10px] font-display font-black uppercase tracking-widest px-3 py-1 rounded-full outline-none",
-                           campaign.status === 'Active' ? "bg-emerald-50 text-emerald-600" :
-                           campaign.status === 'Blocked' ? "bg-red-50 text-red-600" : "bg-slate-50 text-slate-500"
+                           "text-[10.5px] font-mono font-bold uppercase tracking-[1px] px-3.5 py-1.5 rounded-sm outline-none cursor-pointer transition-colors border appearance-none text-center",
+                           campaign.status === 'Active' ? "bg-emerald-50 text-[var(--success)] border-emerald-200" :
+                           campaign.status === 'Blocked' ? "bg-red-50 text-[var(--danger)] border-red-200" : "bg-[var(--bg)] text-[var(--ink-700)] border-[var(--border)]"
                          )}
                        >
                          {['Active', 'Blocked', 'Closed', 'On Hold'].map(s => <option key={s} value={s}>{s}</option>)}
                        </select>
                     </td>
-                    <td className="grid-row-cell">
+                    <td className="px-6 py-4 border-b border-[var(--border)]">
                        <input 
-                         className="text-xs font-bold text-slate-600 bg-transparent border-none outline-none focus:ring-1 focus:ring-[var(--gc-orange-soft)] rounded px-1 -mx-1"
+                         className="text-[14px] font-bold text-[var(--ink-700)] bg-transparent border-none outline-none focus:ring-[2px] focus:ring-[var(--gc-orange-soft)] rounded px-2 py-1 -mx-2 transition-all w-full"
                          value={campaign.country}
                          onChange={(e) => {
                            const updated = dataService.updateCampaign(campaign.id, { country: e.target.value });
@@ -196,32 +197,32 @@ export default function CampaignList() {
                          }}
                        />
                     </td>
-                    <td className="grid-row-cell">
-                       <div className="flex items-center gap-1.5 font-display font-black uppercase text-[10px] tracking-widest cursor-pointer group/health">
+                    <td className="px-6 py-4 border-b border-[var(--border)]">
+                       <div className="flex items-center gap-1.5 font-display font-black uppercase text-[11px] tracking-widest cursor-pointer group/health">
                           <select 
                             value={campaign.recordHealth}
                             onChange={(e) => handleUpdateHealth(campaign.id, e.target.value as any)}
                             className={cn(
-                              "bg-transparent outline-none appearance-none font-display font-black",
-                              campaign.recordHealth === 'Healthy' ? "text-emerald-600" : 
-                              campaign.recordHealth === 'At Risk' ? "text-amber-500" : "text-red-500"
+                              "bg-transparent outline-none appearance-none font-mono font-bold tracking-widest uppercase cursor-pointer hover:underline underline-offset-4 decoration-2",
+                              campaign.recordHealth === 'Healthy' ? "text-[var(--success)] decoration-emerald-200" : 
+                              campaign.recordHealth === 'At Risk' ? "text-amber-500 decoration-amber-200" : "text-[var(--danger)] decoration-red-200"
                             )}
                           >
                             {['Healthy', 'At Risk', 'Critical'].map(h => <option key={h} value={h}>{h}</option>)}
                           </select>
                        </div>
                     </td>
-                    <td className="grid-row-cell text-right">
+                    <td className="px-6 py-4 border-b border-[var(--border)] text-right">
                        <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-all">
                           <button 
                             onClick={() => navigate(`/campaign/${campaign.id}`)}
-                            className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all"
+                            className="p-2.5 text-[var(--ink-300)] hover:text-[var(--gc-purple)] hover:bg-[var(--gc-purple-soft)] rounded-md transition-all shadow-sm shadow-transparent hover:shadow-[var(--shadow-sm)]"
                             title="View Mission Detail"
                           >
-                             <Eye size={16} />
+                             <Eye size={18} />
                           </button>
-                          <button className="p-2 text-slate-400 hover:text-[var(--gc-purple)] hover:bg-[var(--gc-purple-soft)] rounded-lg transition-all">
-                             <MoreVertical size={16} />
+                          <button className="p-2.5 text-[var(--ink-300)] hover:text-[var(--ink-900)] hover:bg-[var(--bg)] rounded-md transition-all shadow-sm shadow-transparent hover:shadow-[var(--shadow-sm)]">
+                             <MoreVertical size={18} />
                           </button>
                        </div>
                     </td>
@@ -229,12 +230,12 @@ export default function CampaignList() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={6} className="p-12 text-center">
-                    <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Search size={24} className="text-slate-200" />
+                  <td colSpan={6} className="p-16 text-center">
+                    <div className="w-20 h-20 bg-[var(--bg)] border border-[var(--border)] rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+                      <Search size={28} className="text-[var(--ink-300)]" />
                     </div>
-                    <p className="text-sm font-bold text-slate-900">No campaigns found</p>
-                    <p className="text-xs text-slate-500 mt-1">Try adjusting your filters or search query.</p>
+                    <p className="text-[18px] font-bold text-[var(--ink-900)] tracking-tight">No campaigns found</p>
+                    <p className="text-[13px] font-mono text-[var(--ink-500)] mt-2">Try adjusting your filters or search query.</p>
                   </td>
                 </tr>
               )}
