@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: "Courier New", Courier, monospace;
+}
+
+:root {
+  --bg: #f8f9fa;
+  --ink: #1a1a1a;
+  --line: #d1d5db;
+  --brand: #ff6b00;
+  --accent: var(--brand);
+  --accent-soft: #f0f0f0;
+  --critical: #ef4444;
+  --warning: #fef9c3;
+  --success: #12B76A;
+}
+
+@layer base {
+  body {
+    @apply bg-[var(--bg)] text-[var(--ink)] font-sans antialiased overflow-x-hidden;
+  }
+}
+
+@layer components {
+  .command-card {
+    @apply bg-white border border-[var(--line)] rounded-[4px] shadow-none overflow-hidden transition-all;
+  }
+  
+  .data-label {
+    @apply text-[10px] uppercase font-medium tracking-[0.05em] text-[#888] mb-1;
+  }
+  
+  .data-value {
+    @apply font-mono font-bold text-lg leading-none;
+  }
+
+  .stage-tag {
+    @apply px-2 py-1 rounded-[2px] text-[10px] font-bold uppercase tracking-tight;
+  }
+
+  /* Theme Specific Patterns */
+  .grid-header-cell {
+    @apply px-4 py-3 bg-[#f9fafb] border-b border-[var(--line)] text-[11px] font-semibold uppercase text-[#666] tracking-wider;
+  }
+
+  .grid-row-cell {
+    @apply px-4 py-3 border-b border-[#f0f0f0] bg-white group-hover:bg-[#fafafa] transition-colors;
+  }
+
+  .workflow-rail {
+    @apply flex gap-[2px] items-center bg-white p-3 border border-[var(--line)] overflow-hidden rounded-[2px];
+  }
+}

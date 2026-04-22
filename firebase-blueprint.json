@@ -1,0 +1,114 @@
+{
+  "entities": {
+    "Company": {
+      "title": "Company",
+      "description": "Client or Brand organization",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "type": { "type": "string", "enum": ["Client", "Brand", "Partner"] },
+        "country": { "type": "string" },
+        "city": { "type": "string" },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "type", "country"]
+    },
+    "Contact": {
+      "title": "Contact",
+      "description": "Influencer or Stakeholder contact details",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": "string" },
+        "handle": { "type": "string", "description": "Platform handle" },
+        "gender": { "type": "string", "enum": ["Male", "Female", "Other"] },
+        "niche": { "type": "string" },
+        "followerRange": { "type": "string" },
+        "country": { "type": "string" },
+        "city": { "type": "string" }
+      },
+      "required": ["name", "email", "handle"]
+    },
+    "Campaign": {
+      "title": "Campaign",
+      "description": "Master campaign record",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "clientId": { "type": "string" },
+        "brandId": { "type": "string" },
+        "country": { "type": "string" },
+        "city": { "type": "string" },
+        "objective": { "type": "string" },
+        "platforms": { "type": "array", "items": { "type": "string" } },
+        "type": { "type": "string" },
+        "budget": { "type": "number" },
+        "budgetType": { "type": "string" },
+        "targetInfluencers": { "type": "integer" },
+        "targetPostingCoverage": { "type": "integer" },
+        "startDate": { "type": "string", "format": "date" },
+        "endDate": { "type": "string", "format": "date" },
+        "deliverables": { "type": "string" },
+        "tags": { "type": "string" },
+        "mentions": { "type": "string" },
+        "links": { "type": "string" },
+        "visitRequired": { "type": "boolean" },
+        "productDetails": { "type": "string" },
+        "approvalFlow": { "type": "string" },
+        "reportingCadence": { "type": "string" },
+        "restrictions": { "type": "string" },
+        "internalOwners": { "type": "array", "items": { "type": "string" } },
+        "clientOwners": { "type": "array", "items": { "type": "string" } },
+        "influencerCriteria": { "type": "string" },
+        "currentOwner": { "type": "string" },
+        "nextAction": { "type": "string" },
+        "nextActionDeadline": { "type": "string", "format": "date-time" },
+        "stage": { "type": "integer", "description": "1-18 stage workflow" },
+        "status": { "type": "string", "enum": ["Active", "Blocked", "Closed"] },
+        "closureOutcome": { "type": "string" },
+        "recordHealth": { "type": "string" }
+      }
+    },
+    "CampaignInfluencer": {
+      "title": "CampaignInfluencer",
+      "description": "Influencer participation in a specific campaign",
+      "type": "object",
+      "properties": {
+        "campaignId": { "type": "string" },
+        "influencerId": { "type": "string" },
+        "status": { "type": "string" },
+        "invitationWave": { "type": "integer" },
+        "visitDate": { "type": "string", "format": "date-time" },
+        "visitCompleted": { "type": "boolean" },
+        "coverageReceived": { "type": "boolean" },
+        "coverageLink": { "type": "string" },
+        "qaStatus": { "type": "string" }
+      }
+    },
+    "PostingCoverage": {
+      "title": "PostingCoverage",
+      "description": "Specific coverage record",
+      "type": "object",
+      "properties": {
+        "campaignId": { "type": "string" },
+        "influencerId": { "type": "string" },
+        "platform": { "type": "string" },
+        "link": { "type": "string" },
+        "qaStatus": { "type": "string" },
+        "recoveryStatus": { "type": "string" }
+      }
+    }
+  },
+  "firestore": {
+    "companies": { "schema": "Company", "description": "Collection of clients and brands" },
+    "contacts": { "schema": "Contact", "description": "Consolidated contact database" },
+    "campaigns": { "schema": "Campaign", "description": "Campaign master records" },
+    "campaigns/{campaignId}/influencers": { "schema": "CampaignInfluencer", "description": "Influencers assigned to a campaign" },
+    "campaigns/{campaignId}/coverage": { "schema": "PostingCoverage", "description": "Posting coverage collected for a campaign" },
+    "tasks": { "schema": "Task", "description": "Operational task list" },
+    "audit_logs": { "schema": "AuditLog", "description": "System-wide audit trail" }
+  }
+}

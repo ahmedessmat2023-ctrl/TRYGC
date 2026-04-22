@@ -1,0 +1,6 @@
+{
+  "name": "TryGC OPS Command Center",
+  "description": "High-performance campaign operations management system for Grand Community Marketing/TryGC, managing the full influencer lifecycle from intake to closure.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["CAMPAIGN_MANAGEMENT", "INFLUENCER_OPERATIONS", "QA_WORKFLOW", "ESCALATION_TRACKING"]
+}
