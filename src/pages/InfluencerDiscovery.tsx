@@ -93,7 +93,7 @@ export default function InfluencerDiscovery() {
                <button 
                  type="submit"
                  disabled={loading}
-                 className="w-full py-2 bg-[var(--accent)] text-white text-sm font-bold rounded-lg hover:bg-opacity-90 transition-all flex items-center justify-center gap-2 shadow-md disabled:opacity-50"
+                 className="w-full py-2 bg-[var(--accent)] text-white text-sm font-bold rounded-lg hover:opacity-90 transition-all flex items-center justify-center gap-2 shadow-md disabled:opacity-50"
                >
                  {loading ? <Loader2 className="animate-spin" size={16} /> : <Search size={16} />}
                  {loading ? 'Searching...' : 'Extract Data'}

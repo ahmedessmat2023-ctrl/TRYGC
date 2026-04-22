@@ -27,7 +27,7 @@ export default function InfluencerList() {
             <Download size={16} />
             Export CSV
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-[var(--accent)] text-white rounded-lg hover:bg-opacity-90 transition-all shadow-sm">
+          <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-[var(--accent)] text-white rounded-lg hover:opacity-90 transition-all shadow-sm">
             <UserPlus size={16} />
             Add Influencer
           </button>

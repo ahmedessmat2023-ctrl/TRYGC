@@ -21,7 +21,7 @@ export default function CampaignClosure() {
             <option>{ClosureOutcome.PARTIAL}</option>
             <option>{ClosureOutcome.CANCELLED}</option>
           </select>
-          <button className="px-6 py-2 bg-[var(--ink)] text-white text-sm font-bold rounded-lg hover:bg-opacity-90 shadow-lg disabled:opacity-50">
+          <button className="px-6 py-2 bg-[var(--ink)] text-white text-sm font-bold rounded-lg hover:opacity-90 shadow-lg disabled:opacity-50">
             Terminate & Archive
           </button>
         </div>

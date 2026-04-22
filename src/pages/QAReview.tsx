@@ -79,7 +79,7 @@ export default function QAReviewWorkspace() {
                  <ThumbsDown size={16} />
                  Reject / Fix
                </button>
-               <button className="flex items-center justify-center gap-2 py-2 px-4 bg-[var(--success)] text-white rounded-lg text-sm font-bold hover:bg-opacity-90 transition-all shadow-md overflow-hidden relative">
+               <button className="flex items-center justify-center gap-2 py-2 px-4 bg-[var(--success)] text-white rounded-lg text-sm font-bold hover:opacity-90 transition-all shadow-md overflow-hidden relative">
                  <ThumbsUp size={16} />
                  Pass Review
                  <div className="absolute inset-0 bg-white/10 opacity-0 hover:opacity-100 transition-opacity" />

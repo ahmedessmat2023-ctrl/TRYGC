@@ -37,7 +37,7 @@ export default function BlockersWorkspace() {
           <h2 className="text-2xl font-bold tracking-tight text-slate-900">Blockers & Escalations</h2>
           <p className="text-slate-500 text-sm italic">"Escalate early before risks become failures."</p>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-[var(--critical)] text-white rounded-lg hover:bg-opacity-90 transition-all shadow-sm">
+        <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-[var(--critical)] text-white rounded-lg hover:opacity-90 transition-all shadow-sm">
           <OctagonAlert size={16} />
           Report New Blocker
         </button>
