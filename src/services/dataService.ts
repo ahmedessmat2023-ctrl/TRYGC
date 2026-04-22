@@ -102,6 +102,63 @@ export let INFLUENCERS_DATA: CampaignInfluencer[] = [
     createdAt: Date.now(),
     updatedAt: Date.now(),
     createdBy: 'system'
+  },
+  {
+    id: 'CI-002',
+    campaignId: 'C-001',
+    influencerId: 'INF-102',
+    username: '@travel_vibe',
+    platform: 'TikTok',
+    status: 'Pending',
+    invitationWave: 1,
+    reminder1Sent: false,
+    reminder2Sent: false,
+    visitCompleted: false,
+    coverageReceived: false,
+    qaStatus: 'Pending',
+    ownerId: 'Sarah A.',
+    city: 'Dubai',
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    createdBy: 'system'
+  },
+  {
+    id: 'CI-003',
+    campaignId: 'C-002',
+    influencerId: 'INF-103',
+    username: '@tech_guy_uae',
+    platform: 'Snapchat',
+    status: 'Invited',
+    invitationWave: 2,
+    reminder1Sent: true,
+    reminder2Sent: true,
+    visitCompleted: false,
+    coverageReceived: false,
+    qaStatus: 'Pending',
+    ownerId: 'Ahmed E.',
+    city: 'Abu Dhabi',
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    createdBy: 'system'
+  },
+  {
+    id: 'CI-004',
+    campaignId: 'C-001',
+    influencerId: 'INF-104',
+    username: '@foodie_riyadh',
+    platform: 'Instagram',
+    status: 'Confirmed',
+    invitationWave: 1,
+    reminder1Sent: true,
+    reminder2Sent: false,
+    visitCompleted: true,
+    coverageReceived: false,
+    qaStatus: 'Pending',
+    ownerId: 'Sarah A.',
+    city: 'Riyadh',
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    createdBy: 'system'
   }
 ];
 
@@ -120,6 +177,13 @@ export let BLOCKERS_DATA: Blocker[] = [
   }
 ];
 
+export let TASKS_DATA: Task[] = [
+  { id: 'TSK-101', title: 'Verify visit proof for @tech_omar', description: 'Check story archives', ownerId: ' Sarah A.', dueDate: new Date('2026-04-20').getTime(), campaignId: 'Red Bull Summer', completed: false, priority: 'High', createdAt: Date.now(), updatedAt: Date.now(), createdBy: 'system' },
+  { id: 'TSK-102', title: 'Prepare influencer list for STC launch', description: 'Filter by tech niche', ownerId: 'Ahmed E.', dueDate: new Date('2026-04-25').getTime(), campaignId: 'STC Pay Launch', completed: false, priority: 'Medium', createdAt: Date.now(), updatedAt: Date.now(), createdBy: 'system' },
+  { id: 'TSK-103', title: 'Archive June coverage receipts', description: 'Batch process in GDrive', ownerId: 'Mona K.', dueDate: new Date('2026-04-22').getTime(), campaignId: 'Generic Ops', completed: false, priority: 'Low', createdAt: Date.now(), updatedAt: Date.now(), createdBy: 'system' },
+  { id: 'TSK-104', title: 'Escalation: Missing recovery Jeddah', description: 'Contact restaurant manager', ownerId: 'Sarah A.', dueDate: new Date('2026-04-18').getTime(), campaignId: 'Hungerstation', completed: false, priority: 'High', createdAt: Date.now(), updatedAt: Date.now(), createdBy: 'system' },
+];
+
 // Service Methods
 export const dataService = {
   getCampaigns: () => [...CAMPAIGNS_DATA],
@@ -130,5 +194,23 @@ export const dataService = {
   addCampaign: (campaign: Campaign) => {
     CAMPAIGNS_DATA = [{ ...campaign, createdAt: Date.now(), updatedAt: Date.now() }, ...CAMPAIGNS_DATA];
     return [...CAMPAIGNS_DATA];
+  },
+  getTasks: () => [...TASKS_DATA],
+  updateTask: (id: string, updates: Partial<Task>) => {
+    TASKS_DATA = TASKS_DATA.map(t => t.id === id ? { ...t, ...updates } : t);
+    return [...TASKS_DATA];
+  },
+  addTask: (task: Task) => {
+    TASKS_DATA = [task, ...TASKS_DATA];
+    return [...TASKS_DATA];
+  },
+  getInfluencers: () => [...INFLUENCERS_DATA],
+  updateInfluencer: (id: string, updates: Partial<CampaignInfluencer>) => {
+    INFLUENCERS_DATA = INFLUENCERS_DATA.map(inf => inf.id === id ? { ...inf, ...updates, updatedAt: Date.now() } : inf);
+    return [...INFLUENCERS_DATA];
+  },
+  bulkUpdateInfluencerStatus: (ids: string[], status: CampaignInfluencer['status']) => {
+    INFLUENCERS_DATA = INFLUENCERS_DATA.map(inf => ids.includes(inf.id) ? { ...inf, status, updatedAt: Date.now() } : inf);
+    return [...INFLUENCERS_DATA];
   }
 };

@@ -33,18 +33,33 @@ export async function discoverInfluencers(
   country: string, 
   niche: string, 
   followerRange: string, 
-  count: number = 5
+  count: number = 6
 ): Promise<SuggestedInfluencer[]> {
   const ai = getAI();
-  const prompt = `Find at least ${count} real influencers in ${country} focusing on the ${niche} niche with a follower range of ${followerRange}. 
-  Use Google Search to find current, high-performing creators. 
-  For each influencer, provide their platform handle, platform (Instagram, TikTok, etc), follower count, estimated engagement rate, and why they are relevant.`;
+  
+  const systemInstruction = `You are a professional Influencer Discovery Engineer. 
+  Your goal is to find active, high-performing influencers that match the user's criteria.
+  Use Google Search to verify recent activity (last 30 days), follower counts, and engagement metrics.
+  Return a diverse list of creators from different cities within the target country if applicable.`;
+
+  const prompt = `Find ${count} high-performing influencers in ${country} for the ${niche} niche. 
+  Target Follower Range: ${followerRange}.
+  
+  For each influencer, you must provide:
+  1. handle: The social media tag (e.g. @username).
+  2. platform: The primary platform (Instagram, TikTok, Snapchat, YouTube).
+  3. followers: Current follower count (abbreviated, e.g. 1.2M).
+  4. engagement: Estimated engagement rate (e.g. 4.2%).
+  5. niche: Their specific Content Pillar (e.g. Sustainable Fashion).
+  6. location: Specific city and country.
+  7. relevanceReason: A 1-2 sentence tactical analysis of why they fit this specific campaign and their recent performance trends.`;
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-3-flash-preview", 
       contents: prompt,
       config: {
+        systemInstruction,
         tools: [{ googleSearch: {} }],
         responseMimeType: "application/json",
         responseSchema: {
@@ -66,8 +81,7 @@ export async function discoverInfluencers(
       }
     });
 
-    const results = JSON.parse(response.text);
-    return results;
+    return JSON.parse(response.text);
   } catch (error) {
     console.error("Discovery Error:", error);
     throw error;

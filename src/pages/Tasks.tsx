@@ -18,26 +18,12 @@ import {
 } from 'lucide-react';
 import { cn } from '../utils';
 import { format, isPast, parseISO } from 'date-fns';
-
-interface Task {
-  id: string;
-  title: string;
-  priority: 'High' | 'Medium' | 'Low';
-  dueDate: string;
-  campaign: string;
-  status: 'Pending' | 'In Progress' | 'Completed';
-}
-
-const INITIAL_TASKS: Task[] = [
-  { id: 'TSK-101', title: 'Verify visit proof for @tech_omar', priority: 'High', dueDate: '2026-04-20', campaign: 'Red Bull Summer', status: 'In Progress' },
-  { id: 'TSK-102', title: 'Prepare influencer list for STC launch', priority: 'Medium', dueDate: '2026-04-25', campaign: 'STC Pay Launch', status: 'Pending' },
-  { id: 'TSK-103', title: 'Archive June coverage receipts', priority: 'Low', dueDate: '2026-04-22', campaign: 'Generic Ops', status: 'Pending' },
-  { id: 'TSK-104', title: 'Escalation: Missing recovery Jeddah', priority: 'High', dueDate: '2026-04-18', campaign: 'Hungerstation', status: 'In Progress' },
-];
+import { dataService } from '../services/dataService';
+import { Task } from '../types';
 
 export default function TasksCenter() {
-  const [tasks, setTasks] = useState<Task[]>(INITIAL_TASKS);
-  const [sortConfig, setSortConfig] = useState<{ key: keyof Task; direction: 'asc' | 'desc' } | null>(null);
+  const [tasks, setTasks] = useState<Task[]>(dataService.getTasks());
+  const [sortConfig, setSortConfig] = useState<{ key: keyof Task; direction: 'asc' | 'desc' }>({ key: 'dueDate', direction: 'asc' });
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editBuffer, setEditBuffer] = useState<Partial<Task>>({});
 
@@ -51,17 +37,22 @@ export default function TasksCenter() {
 
   const sortedTasks = useMemo(() => {
     const sortableTasks = [...tasks];
-    if (sortConfig !== null) {
-      sortableTasks.sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === 'asc' ? -1 : 1;
-        }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === 'asc' ? 1 : -1;
-        }
-        return 0;
-      });
-    }
+    const priorityWeight = { High: 3, Medium: 2, Low: 1, Critical: 4 };
+
+    sortableTasks.sort((a, b) => {
+      const aVal = a[sortConfig.key] as any;
+      const bVal = b[sortConfig.key] as any;
+
+      if (sortConfig.key === 'priority') {
+        const aWeight = priorityWeight[a.priority as keyof typeof priorityWeight] || 0;
+        const bWeight = priorityWeight[b.priority as keyof typeof priorityWeight] || 0;
+        return sortConfig.direction === 'asc' ? aWeight - bWeight : bWeight - aWeight;
+      }
+
+      if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
     return sortableTasks;
   }, [tasks, sortConfig]);
 
@@ -72,7 +63,8 @@ export default function TasksCenter() {
 
   const saveEdit = () => {
     if (editingId) {
-      setTasks(tasks.map(t => t.id === editingId ? { ...t, ...editBuffer } : t));
+      const updated = dataService.updateTask(editingId, editBuffer);
+      setTasks(updated);
       setEditingId(null);
     }
   };
@@ -82,8 +74,13 @@ export default function TasksCenter() {
     setEditBuffer({});
   };
 
+  const toggleStatus = (task: Task) => {
+    const updated = dataService.updateTask(task.id, { completed: !task.completed });
+    setTasks(updated);
+  };
+
   return (
-    <div className="space-y-8 pb-12">
+    <div className="space-y-8 pb-12 animate-in fade-in duration-500">
       <div className="flex justify-between items-end">
         <div>
           <h2 className="section-title text-4xl">Tasks Center</h2>
@@ -100,15 +97,13 @@ export default function TasksCenter() {
       <div className="command-card bg-white overflow-hidden">
         <div className="p-4 border-b border-[var(--border)] bg-slate-50/50 flex justify-between items-center">
            <div className="flex items-center gap-4">
-              <span className="text-[10px] font-display font-black uppercase tracking-widest text-slate-400">Sort by:</span>
+              <span className="text-[10px] font-display font-black uppercase tracking-widest text-slate-400">Quick Sort:</span>
               <SortTrigger label="Priority" active={sortConfig?.key === 'priority'} direction={sortConfig?.direction} onClick={() => handleSort('priority')} />
               <SortTrigger label="Due Date" active={sortConfig?.key === 'dueDate'} direction={sortConfig?.direction} onClick={() => handleSort('dueDate')} />
-              <SortTrigger label="Campaign" active={sortConfig?.key === 'campaign'} direction={sortConfig?.direction} onClick={() => handleSort('campaign')} />
+              <SortTrigger label="Campaign" active={sortConfig?.key === 'campaignId'} direction={sortConfig?.direction} onClick={() => handleSort('campaignId')} />
            </div>
-           <div className="flex items-center gap-2">
-              <button className="p-2 hover:bg-white rounded-lg text-slate-400 transition-colors border border-transparent hover:border-[var(--border)]">
-                 <Filter size={16} />
-              </button>
+           <div className="flex items-center gap-2 text-xs font-bold text-slate-400">
+              <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.4)]" /> Overdue Risk</span>
            </div>
         </div>
 
@@ -116,89 +111,153 @@ export default function TasksCenter() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr>
-                <th className="grid-header-cell w-[100px]">Status</th>
-                <th className="grid-header-cell">Task Description</th>
-                <th className="grid-header-cell">Campaign</th>
-                <th className="grid-header-cell">Priority</th>
-                <th className="grid-header-cell">Due Date</th>
+                <th className="grid-header-cell w-[80px]">State</th>
+                <th 
+                  className="grid-header-cell cursor-pointer hover:bg-slate-50 transition-colors"
+                  onClick={() => handleSort('title')}
+                >
+                  <div className="flex items-center gap-2">
+                    Task Description {sortConfig.key === 'title' && (sortConfig.direction === 'asc' ? <ChevronUp size={12}/> : <ChevronDown size={12}/>)}
+                  </div>
+                </th>
+                <th 
+                  className="grid-header-cell cursor-pointer hover:bg-slate-50 transition-colors"
+                  onClick={() => handleSort('campaignId')}
+                >
+                  <div className="flex items-center gap-2">
+                    Campaign {sortConfig.key === 'campaignId' && (sortConfig.direction === 'asc' ? <ChevronUp size={12}/> : <ChevronDown size={12}/>)}
+                  </div>
+                </th>
+                <th 
+                  className="grid-header-cell cursor-pointer hover:bg-slate-50 transition-colors"
+                  onClick={() => handleSort('priority')}
+                >
+                  <div className="flex items-center gap-2">
+                    Priority {sortConfig.key === 'priority' && (sortConfig.direction === 'asc' ? <ChevronUp size={12}/> : <ChevronDown size={12}/>)}
+                  </div>
+                </th>
+                <th 
+                  className="grid-header-cell cursor-pointer hover:bg-slate-50 transition-colors"
+                  onClick={() => handleSort('dueDate')}
+                >
+                  <div className="flex items-center gap-2">
+                    Due Date {sortConfig.key === 'dueDate' && (sortConfig.direction === 'asc' ? <ChevronUp size={12}/> : <ChevronDown size={12}/>)}
+                  </div>
+                </th>
                 <th className="grid-header-cell text-right">Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-[var(--border)]">
               {sortedTasks.map((task) => {
                 const isEditing = editingId === task.id;
-                const overdue = isPast(parseISO(task.dueDate)) && task.status !== 'Completed';
+                const overdue = isPast(task.dueDate) && !task.completed;
 
                 return (
-                  <tr key={task.id} className={cn("group transition-colors", overdue && !isEditing ? "bg-red-50/30" : "bg-white")}>
+                  <tr key={task.id} className={cn(
+                    "group transition-all duration-300", 
+                    overdue && !isEditing ? "bg-red-50/10 hover:bg-red-50/20" : "hover:bg-[var(--gc-purple-soft)]/20",
+                    isEditing && "bg-[var(--gc-orange-soft)]/20"
+                  )}>
                     <td className="grid-row-cell">
-                       <button className={cn(
-                         "w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all",
-                         task.status === 'Completed' ? "bg-emerald-500 border-emerald-500 text-white" : "border-[var(--border)] text-transparent hover:border-[var(--gc-orange)]"
-                       )}>
-                         <Check size={14} />
+                       <button 
+                         onClick={() => toggleStatus(task)}
+                         className={cn(
+                           "w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all shadow-sm",
+                           task.completed ? "bg-emerald-500 border-emerald-500 text-white" : "bg-white border-slate-200 text-transparent hover:border-[var(--gc-orange)]"
+                         )}
+                       >
+                         <Check size={14} strokeWidth={3} />
                        </button>
                     </td>
-                    <td className="grid-row-cell min-w-[300px]">
+                    <td 
+                      className="grid-row-cell min-w-[350px] cursor-text"
+                      onDoubleClick={() => !isEditing && startEdit(task)}
+                    >
                       {isEditing ? (
                         <input 
-                          className="w-full px-2 py-1 bg-slate-50 border border-[var(--gc-orange)] rounded-md text-sm font-bold outline-none"
+                          className="w-full px-3 py-2 bg-white border-2 border-[var(--gc-orange)] rounded-xl text-sm font-bold outline-none shadow-lg animate-in zoom-in-95 duration-200"
                           value={editBuffer.title}
                           onChange={e => setEditBuffer({ ...editBuffer, title: e.target.value })}
                           autoFocus
+                          onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
                         />
                       ) : (
                         <div className="flex flex-col">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-bold text-slate-900 leading-tight">{task.title}</span>
+                          <div className="flex items-center gap-3">
+                            <span className={cn(
+                              "text-sm font-bold text-slate-900 transition-colors",
+                              task.completed && "text-slate-400 line-through decoration-emerald-500/30"
+                            )}>
+                              {task.title}
+                            </span>
                             {overdue && (
-                              <span className="flex items-center gap-1 text-[9px] font-display font-black uppercase text-red-600 bg-red-100 px-1.5 py-0.5 rounded animate-pulse">
-                                <AlertCircle size={10} /> Overdue
-                              </span>
+                              <div className="relative flex h-3 w-3">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 shadow-sm shadow-red-500/40"></span>
+                              </div>
                             )}
                           </div>
-                          <span className="text-[10px] font-mono text-slate-400 mt-0.5">{task.id}</span>
+                          <span className="text-[10px] font-mono text-slate-400 mt-1 uppercase tracking-widest">{task.id}</span>
                         </div>
                       )}
                     </td>
                     <td className="grid-row-cell">
-                       <span className="stage-tag bg-[var(--gc-purple-soft)] text-[var(--gc-purple)]">{task.campaign}</span>
+                       <span className="px-3 py-1 bg-[var(--gc-purple-soft)] text-[var(--gc-purple)] rounded-lg text-[10px] font-display font-black uppercase tracking-tight border border-[var(--gc-purple-soft)]">
+                         {task.campaignId}
+                       </span>
                     </td>
                     <td className="grid-row-cell">
                        <PriorityBadge level={task.priority} />
                     </td>
-                    <td className="grid-row-cell">
+                    <td 
+                      className="grid-row-cell"
+                      onDoubleClick={() => !isEditing && startEdit(task)}
+                    >
                       {isEditing ? (
                         <input 
                           type="date"
-                          className="px-2 py-1 bg-slate-50 border border-[var(--gc-orange)] rounded-md text-xs font-mono outline-none"
-                          value={editBuffer.dueDate}
-                          onChange={e => setEditBuffer({ ...editBuffer, dueDate: e.target.value })}
+                          className="px-3 py-2 bg-white border-2 border-[var(--gc-orange)] rounded-xl text-xs font-mono font-bold outline-none shadow-lg animate-in zoom-in-95 duration-200"
+                          value={editBuffer.dueDate ? format(editBuffer.dueDate, 'yyyy-MM-dd') : ''}
+                          onChange={e => setEditBuffer({ ...editBuffer, dueDate: new Date(e.target.value).getTime() })}
                         />
                       ) : (
-                        <div className="flex items-center gap-2 text-xs font-mono font-bold text-slate-600">
-                           <Calendar size={12} className={overdue ? "text-red-500" : "text-slate-300"} />
-                           {format(parseISO(task.dueDate), 'MMM dd, yyyy')}
+                        <div className={cn(
+                          "flex items-center gap-2 text-xs font-mono font-black transition-colors",
+                          overdue ? "text-red-600" : "text-slate-600"
+                        )}>
+                           <Calendar size={14} className={overdue ? "text-red-500 animate-pulse" : "text-slate-300"} />
+                           {format(task.dueDate, 'MMM dd, yyyy')}
                         </div>
                       )}
                     </td>
                     <td className="grid-row-cell text-right">
                       {isEditing ? (
-                        <div className="flex items-center justify-end gap-1">
-                          <button onClick={saveEdit} className="p-1.5 bg-emerald-500 text-white rounded-md hover:bg-emerald-600">
-                            <Check size={14} />
+                        <div className="flex items-center justify-end gap-2">
+                          <button 
+                            onClick={saveEdit} 
+                            className="w-8 h-8 flex items-center justify-center bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 shadow-lg shadow-emerald-500/20 active:scale-95 transition-all"
+                            title="Commit Changes"
+                          >
+                            <Check size={16} strokeWidth={3} />
                           </button>
-                          <button onClick={cancelEdit} className="p-1.5 bg-slate-200 text-slate-600 rounded-md hover:bg-slate-300">
-                            <X size={14} />
+                          <button 
+                            onClick={cancelEdit} 
+                            className="w-8 h-8 flex items-center justify-center bg-slate-100 text-slate-400 rounded-xl hover:bg-slate-200 active:scale-95 transition-all"
+                            title="Discard"
+                          >
+                            <X size={16} strokeWidth={3} />
                           </button>
                         </div>
                       ) : (
-                        <button 
-                          onClick={() => startEdit(task)}
-                          className="p-2 text-slate-400 hover:text-[var(--gc-orange)] hover:bg-[var(--gc-orange-soft)] rounded-lg transition-all opacity-0 group-hover:opacity-100"
-                        >
-                          <Edit2 size={14} />
-                        </button>
+                        <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                          <button 
+                            onClick={() => startEdit(task)}
+                            className="p-2 text-slate-400 hover:text-[var(--gc-orange)] hover:bg-[var(--gc-orange-soft)] rounded-xl transition-all"
+                            title="Edit Task"
+                          >
+                            <Edit2 size={16} />
+                          </button>
+                        </div>
                       )}
                     </td>
                   </tr>

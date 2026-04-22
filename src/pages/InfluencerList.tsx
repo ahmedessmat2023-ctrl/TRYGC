@@ -15,16 +15,23 @@ import {
   CheckCircle2,
   Clock,
   ExternalLink,
-  MessageSquare
+  MessageSquare,
+  CheckSquare,
+  Square,
+  RefreshCw,
+  Trash2,
+  X
 } from 'lucide-react';
 import { cn } from '../utils';
-import { INFLUENCERS_DATA } from '../services/dataService';
+import { dataService } from '../services/dataService';
 import { CampaignInfluencer } from '../types';
 
 export default function InfluencerList() {
-  const [influencers, setInfluencers] = useState<CampaignInfluencer[]>(INFLUENCERS_DATA);
+  const [influencers, setInfluencers] = useState<CampaignInfluencer[]>(dataService.getInfluencers());
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [isBulkUpdating, setIsBulkUpdating] = useState(false);
 
   const filteredInfluencers = influencers.filter(inf => 
     inf.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -32,15 +39,39 @@ export default function InfluencerList() {
   );
 
   const handleUpdateStatus = (id: string, status: CampaignInfluencer['status']) => {
-    setInfluencers(prev => prev.map(inf => inf.id === id ? { ...inf, status } : inf));
+    const updated = dataService.updateInfluencer(id, { status });
+    setInfluencers(updated);
   };
 
   const handleUpdateCity = (id: string, city: string) => {
-    setInfluencers(prev => prev.map(inf => inf.id === id ? { ...inf, city } : inf));
+    const updated = dataService.updateInfluencer(id, { city });
+    setInfluencers(updated);
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.length === filteredInfluencers.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(filteredInfluencers.map(i => i.id));
+    }
+  };
+
+  const handleBulkStatusChange = (status: CampaignInfluencer['status']) => {
+    setIsBulkUpdating(true);
+    setTimeout(() => {
+      const updated = dataService.bulkUpdateInfluencerStatus(selectedIds, status);
+      setInfluencers(updated);
+      setSelectedIds([]);
+      setIsBulkUpdating(false);
+    }, 800);
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
+    <div className="space-y-8 animate-in fade-in duration-500 relative">
       <div className="flex justify-between items-end">
         <div>
           <h2 className="section-title text-4xl">Influencer Corps</h2>
@@ -70,16 +101,60 @@ export default function InfluencerList() {
         </div>
       </div>
 
+      {/* Floating Bulk Action Bar */}
+      {selectedIds.length > 0 && (
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-6 animate-in slide-in-from-bottom-8 duration-300 border border-slate-700">
+           <div className="flex items-center gap-3 pr-6 border-r border-slate-700">
+              <div className="w-8 h-8 rounded-lg bg-[var(--gc-purple)] flex items-center justify-center font-bold text-sm">
+                 {selectedIds.length}
+              </div>
+              <p className="text-sm font-bold tracking-tight text-slate-300 uppercase">Selected</p>
+           </div>
+           
+           <div className="flex items-center gap-2">
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mr-2">Bulk Status Update:</p>
+              {['Pending', 'Invited', 'Confirmed', 'Scheduled', 'Completed', 'Dropped'].map(s => (
+                <button 
+                  key={s}
+                  onClick={() => handleBulkStatusChange(s as any)}
+                  disabled={isBulkUpdating}
+                  className="px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest bg-slate-800 hover:bg-slate-700 transition-colors border border-slate-700 disabled:opacity-50"
+                >
+                  {s}
+                </button>
+              ))}
+           </div>
+
+           <div className="pl-6 border-l border-slate-700 flex items-center gap-3">
+              <button 
+                onClick={() => setSelectedIds([])}
+                className="p-2 text-slate-400 hover:text-white transition-colors"
+                title="Cancel selection"
+              >
+                <X size={20} />
+              </button>
+           </div>
+           
+           {isBulkUpdating && (
+             <div className="absolute inset-x-0 -top-1 px-4">
+                <div className="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
+                   <div className="h-full bg-[var(--gc-purple)] animate-progress" style={{ width: '100%' }} />
+                </div>
+             </div>
+           )}
+        </div>
+      )}
+
       <div className="command-card bg-white overflow-hidden">
         <div className="p-4 border-b border-[var(--border)] flex items-center gap-4 bg-slate-50/30">
            <div className="relative flex-1">
-             <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-             <input 
-               className="w-full pl-10 pr-4 py-2 text-sm outline-none font-medium bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[var(--gc-purple-soft)] transition-all" 
-               placeholder="Search by username, niche, or city..." 
-               value={searchQuery}
-               onChange={(e) => setSearchQuery(e.target.value)}
-             />
+              <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input 
+                className="w-full pl-10 pr-4 py-2 text-sm outline-none font-medium bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[var(--gc-purple-soft)] transition-all" 
+                placeholder="Search by username, niche, or city..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
            </div>
            <button className="flex items-center gap-2 px-4 py-2 h-[42px] border border-slate-200 rounded-xl text-xs font-bold text-slate-500 bg-white hover:bg-slate-50 transition-all">
               <Filter size={14} /> Global Filters
@@ -91,6 +166,16 @@ export default function InfluencerList() {
             <table className="w-full text-left">
               <thead>
                 <tr>
+                  <th className="grid-header-cell w-[50px]">
+                     <button 
+                       onClick={toggleSelectAll}
+                       className="p-1 hover:bg-slate-200 rounded transition-colors"
+                     >
+                       {selectedIds.length === filteredInfluencers.length && filteredInfluencers.length > 0 
+                         ? <CheckSquare size={18} className="text-[var(--gc-purple)]" /> 
+                         : <Square size={18} className="text-slate-300" />}
+                     </button>
+                  </th>
                   <th className="grid-header-cell">Influencer Identity</th>
                   <th className="grid-header-cell">Platform</th>
                   <th className="grid-header-cell">Operational Status</th>
@@ -100,7 +185,23 @@ export default function InfluencerList() {
               </thead>
               <tbody className="divide-y divide-[var(--border)]">
                 {filteredInfluencers.length > 0 ? filteredInfluencers.map((inf) => (
-                  <tr key={inf.id} className="group hover:bg-[var(--gc-purple-soft)]/20 transition-all">
+                  <tr 
+                    key={inf.id} 
+                    className={cn(
+                      "group transition-all",
+                      selectedIds.includes(inf.id) ? "bg-[var(--gc-purple-soft)]/30" : "hover:bg-[var(--gc-purple-soft)]/10"
+                    )}
+                  >
+                    <td className="grid-row-cell">
+                       <button 
+                         onClick={() => toggleSelect(inf.id)}
+                         className="p-1"
+                       >
+                         {selectedIds.includes(inf.id) 
+                           ? <CheckSquare size={18} className="text-[var(--gc-purple)]" /> 
+                           : <Square size={18} className="text-slate-200 group-hover:text-slate-300 transition-colors" />}
+                       </button>
+                    </td>
                     <td className="grid-row-cell">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center font-bold text-[var(--gc-purple)] border-2 border-white shadow-sm">
@@ -111,7 +212,8 @@ export default function InfluencerList() {
                             className="text-sm font-bold text-slate-900 bg-transparent border-none outline-none focus:ring-1 focus:ring-[var(--gc-purple-soft)] rounded px-1 -mx-1"
                             value={inf.username}
                             onChange={(e) => {
-                              setInfluencers(prev => prev.map(i => i.id === inf.id ? { ...i, username: e.target.value } : i));
+                              const updated = dataService.updateInfluencer(inf.id, { username: e.target.value });
+                              setInfluencers(updated);
                             }}
                           />
                           <p className="text-[10px] text-slate-400 font-mono mt-1 uppercase tracking-tighter">ID: {inf.influencerId}</p>
@@ -122,7 +224,8 @@ export default function InfluencerList() {
                        <select 
                          value={inf.platform}
                          onChange={(e) => {
-                           setInfluencers(prev => prev.map(i => i.id === inf.id ? { ...i, platform: e.target.value } : i));
+                           const updated = dataService.updateInfluencer(inf.id, { platform: e.target.value });
+                           setInfluencers(updated);
                          }}
                          className="text-xs font-bold text-slate-600 bg-transparent outline-none cursor-pointer"
                        >
@@ -162,7 +265,7 @@ export default function InfluencerList() {
                   </tr>
                 )) : (
                   <tr>
-                    <td colSpan={5} className="p-12 text-center text-slate-400 italic">No influencer operational records found.</td>
+                    <td colSpan={6} className="p-12 text-center text-slate-400 italic">No influencer operational records found.</td>
                   </tr>
                 )}
               </tbody>
@@ -171,7 +274,19 @@ export default function InfluencerList() {
         ) : (
           <div className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
              {filteredInfluencers.map(inf => (
-               <div key={inf.id} className="command-card p-6 flex flex-col items-center text-center group">
+               <div 
+                 key={inf.id} 
+                 onClick={() => toggleSelect(inf.id)}
+                 className={cn(
+                   "command-card p-6 flex flex-col items-center text-center group relative cursor-pointer transition-all",
+                   selectedIds.includes(inf.id) ? "ring-2 ring-[var(--gc-purple)] bg-[var(--gc-purple-soft)]/10 scale-[0.98]" : "hover:shadow-xl"
+                 )}
+               >
+                  {selectedIds.includes(inf.id) && (
+                    <div className="absolute top-3 right-3 text-[var(--gc-purple)]">
+                       <CheckCircle2 size={24} />
+                    </div>
+                  )}
                   <div className="w-20 h-20 rounded-3xl bg-[var(--gc-purple-soft)] text-[var(--gc-purple)] flex items-center justify-center font-display font-black text-2xl mb-4 group-hover:rotate-6 transition-transform">
                     {inf.username.substring(1, 2).toUpperCase()}
                   </div>

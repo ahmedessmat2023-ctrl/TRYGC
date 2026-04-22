@@ -8,6 +8,7 @@ import { NavLink } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   PlusCircle, 
+  Settings2,
   FileCheck, 
   Users, 
   Mail, 
@@ -30,6 +31,7 @@ import { cn } from '../utils';
 const navItems = [
   { icon: LayoutDashboard, label: 'Command Center', path: '/' },
   { icon: Layers, label: 'Campaign Registry', path: '/campaigns' },
+  { icon: Settings2, label: 'Campaign Setup', path: '/setup' },
   { icon: PlusCircle, label: 'Campaign Intake', path: '/intake' },
   { icon: FileCheck, label: 'Validation Queue', path: '/validation' },
   { icon: Sparkles, label: 'AI Discovery', path: '/discovery' },
