@@ -29,6 +29,7 @@ import { cn } from '../utils';
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Command Center', path: '/' },
+  { icon: Layers, label: 'Campaign Registry', path: '/campaigns' },
   { icon: PlusCircle, label: 'Campaign Intake', path: '/intake' },
   { icon: FileCheck, label: 'Validation Queue', path: '/validation' },
   { icon: Sparkles, label: 'AI Discovery', path: '/discovery' },

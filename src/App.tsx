@@ -18,6 +18,7 @@ import AssetRegistry from './pages/AssetRegistry';
 import SettingsWorkspace from './pages/Settings';
 import TasksCenter from './pages/Tasks';
 import Dashboard from './pages/Dashboard';
+import CampaignList from './pages/CampaignList';
 import { Users, FileCheck2 as FileCheckIcon, Activity } from 'lucide-react';
 import { cn } from './utils';
 
@@ -50,6 +51,7 @@ export default function App() {
           <div className="p-10 flex-1 overflow-y-auto">
             <Routes>
               <Route path="/" element={<Dashboard />} />
+              <Route path="/campaigns" element={<CampaignList />} />
               <Route path="/intake" element={<CampaignIntake />} />
               <Route path="/validation" element={<Placeholder title="Validation & Stage Gates" />} />
               <Route path="/influencers" element={<InfluencerList />} />
