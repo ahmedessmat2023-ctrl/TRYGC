@@ -20,6 +20,12 @@ import TasksCenter from './pages/Tasks';
 import Dashboard from './pages/Dashboard';
 import CampaignList from './pages/CampaignList';
 import CampaignSetup from './pages/CampaignSetup';
+import CampaignDetail from './pages/CampaignDetail';
+import InfluencerProfile from './pages/InfluencerProfile';
+import Invitations from './pages/Invitations';
+import Scheduling from './pages/Scheduling';
+import Validation from './pages/Validation';
+import AdminConsole from './pages/Admin';
 import { Users, FileCheck2 as FileCheckIcon, Activity } from 'lucide-react';
 import { cn } from './utils';
 
@@ -54,20 +60,23 @@ export default function App() {
               <Route path="/" element={<Dashboard />} />
               <Route path="/campaigns" element={<CampaignList />} />
               <Route path="/setup" element={<CampaignSetup />} />
+              <Route path="/campaign/:id" element={<CampaignDetail />} />
               <Route path="/intake" element={<CampaignIntake />} />
-              <Route path="/validation" element={<Placeholder title="Validation & Stage Gates" />} />
+              <Route path="/validation" element={<Validation />} />
               <Route path="/influencers" element={<InfluencerList />} />
+              <Route path="/influencer/:id" element={<InfluencerProfile />} />
               <Route path="/discovery" element={<InfluencerDiscovery />} />
-              <Route path="/invitations" element={<Placeholder title="Invitation Tracker" />} />
-              <Route path="/scheduling" element={<Placeholder title="Scheduling Calendar" />} />
+              <Route path="/invitations" element={<Invitations />} />
+              <Route path="/scheduling" element={<Scheduling />} />
               <Route path="/coverage" element={<PostingCoverageDashboard />} />
               <Route path="/qa" element={<QAReviewWorkspace />} />
               <Route path="/blockers" element={<BlockersWorkspace />} />
               <Route path="/tasks" element={<TasksCenter />} />
               <Route path="/analytics" element={<OperationalAnalytics />} />
               <Route path="/assets" element={<AssetRegistry />} />
-              <Route path="/admin" element={<SettingsWorkspace />} />
+              <Route path="/admin" element={<AdminConsole />} />
               <Route path="/closure" element={<CampaignClosure />} />
+              <Route path="/settings" element={<SettingsWorkspace />} />
             </Routes>
           </div>
         </main>

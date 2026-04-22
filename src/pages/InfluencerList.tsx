@@ -4,6 +4,7 @@
  */
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Users, 
   Search, 
@@ -27,6 +28,7 @@ import { dataService } from '../services/dataService';
 import { CampaignInfluencer } from '../types';
 
 export default function InfluencerList() {
+  const navigate = useNavigate();
   const [influencers, setInfluencers] = useState<CampaignInfluencer[]>(dataService.getInfluencers());
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
   const [searchQuery, setSearchQuery] = useState('');
@@ -254,10 +256,11 @@ export default function InfluencerList() {
                     </td>
                     <td className="grid-row-cell text-right">
                        <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button className="p-2 text-slate-400 hover:text-[var(--gc-orange)] hover:bg-[var(--gc-orange-soft)] rounded-lg transition-all">
-                             <MessageSquare size={16} />
-                          </button>
-                          <button className="p-2 text-slate-400 hover:text-[var(--gc-purple)] hover:bg-[var(--gc-purple-soft)] rounded-lg transition-all">
+                          <button 
+                            onClick={() => navigate(`/influencer/${inf.id}`)}
+                            className="p-2 text-slate-400 hover:text-[var(--gc-purple)] hover:bg-[var(--gc-purple-soft)] rounded-lg transition-all"
+                            title="View Profile"
+                          >
                              <ExternalLink size={16} />
                           </button>
                        </div>
@@ -298,7 +301,13 @@ export default function InfluencerList() {
                   )}>
                     {inf.status}
                   </div>
-                  <button className="w-full py-2 border border-slate-100 rounded-xl text-[10px] font-display font-black uppercase tracking-widest text-slate-400 hover:bg-[var(--gc-purple)] hover:text-white transition-all shadow-sm">
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/influencer/${inf.id}`);
+                    }}
+                    className="w-full py-2 border border-slate-100 rounded-xl text-[10px] font-display font-black uppercase tracking-widest text-slate-400 hover:bg-[var(--gc-purple)] hover:text-white transition-all shadow-sm"
+                  >
                     Operational Detail
                   </button>
                </div>

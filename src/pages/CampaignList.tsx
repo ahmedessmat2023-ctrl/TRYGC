@@ -13,14 +13,17 @@ import {
   Activity,
   AlertCircle,
   CheckCircle2,
-  Clock
+  Clock,
+  Eye
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { cn } from '../utils';
 import { CampaignStage, STAGE_NAMES } from '../constants';
 import { Campaign } from '../types';
 import { dataService } from '../services/dataService';
 
 export default function CampaignList() {
+  const navigate = useNavigate();
   const [campaigns, setCampaigns] = useState<Campaign[]>(dataService.getCampaigns());
   const [selectedStage, setSelectedStage] = useState<number | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -209,9 +212,18 @@ export default function CampaignList() {
                        </div>
                     </td>
                     <td className="grid-row-cell text-right">
-                       <button className="p-2 text-slate-400 hover:text-[var(--gc-purple)] hover:bg-[var(--gc-purple-soft)] rounded-lg transition-all opacity-0 group-hover:opacity-100">
-                          <MoreVertical size={16} />
-                       </button>
+                       <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                          <button 
+                            onClick={() => navigate(`/campaign/${campaign.id}`)}
+                            className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all"
+                            title="View Mission Detail"
+                          >
+                             <Eye size={16} />
+                          </button>
+                          <button className="p-2 text-slate-400 hover:text-[var(--gc-purple)] hover:bg-[var(--gc-purple-soft)] rounded-lg transition-all">
+                             <MoreVertical size={16} />
+                          </button>
+                       </div>
                     </td>
                   </tr>
                 ))

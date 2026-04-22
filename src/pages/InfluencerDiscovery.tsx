@@ -16,7 +16,6 @@ import {
   Zap, 
   TrendingUp, 
   ShieldCheck,
-  Activity,
   Layers,
   ArrowRight,
   RefreshCw,

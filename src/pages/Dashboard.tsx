@@ -15,8 +15,14 @@ import {
   Layers,
   Search,
   ArrowUpRight,
-  ShieldAlert
+  ShieldAlert,
+  ShieldCheck,
+  Zap,
+  Sparkles,
+  Eye
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { motion } from 'motion/react';
 import { cn } from '../utils';
 
 const CAMPAIGN_HEALTH = [
@@ -32,92 +38,146 @@ const STAGES = [
 ];
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   return (
-    <div className="space-y-8 pb-12 animate-in fade-in duration-500">
-      {/* Tactical Hero SECTION */}
-      <section className="relative overflow-hidden bg-[var(--ink-900)] rounded-[2.5rem] p-10 text-white shadow-2xl">
-        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-gradient-to-br from-[var(--gc-orange)] to-transparent opacity-10 blur-[100px] -mr-40 -mt-40" />
-        <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-gradient-to-tr from-[var(--gc-purple)] to-transparent opacity-10 blur-[100px] -ml-20 -mb-20" />
+    <div className="max-w-7xl mx-auto space-y-10 pb-20 animate-in fade-in duration-700">
+      {/* Executive Summary Section */}
+      <section className="relative overflow-hidden bg-slate-900 rounded-[3rem] p-12 text-white shadow-[0_40px_100px_rgba(0,0,0,0.25)] border border-slate-800">
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br from-[var(--gc-orange)] to-transparent opacity-10 blur-[120px] -mr-60 -mt-60" />
+        <div className="absolute top-1/2 left-0 w-80 h-80 bg-[var(--gc-purple)] opacity-10 blur-[100px] -ml-20 rounded-full" />
         
-        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-display font-black uppercase tracking-[0.2em] text-[var(--gc-orange)]">
-              <Activity size={12} className="animate-pulse" /> Final Reconciliation Cycle Active
+        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+          <div className="lg:col-span-7 space-y-8">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400">
+                <Activity size={12} className="animate-pulse" /> Global Reconciliation Sync
+              </div>
+              <div className="h-px w-20 bg-slate-800" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">System Uptime: 99.98%</span>
             </div>
-            <h1 className="font-display font-black text-6xl leading-[1] tracking-tight">
+
+            <h1 className="font-display font-black text-7xl leading-[0.9] tracking-tighter">
               Operational <br /> 
-              <span className="text-[var(--gc-orange)]">Heartbeat.</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--gc-orange)] to-amber-300">Heartbeat.</span>
             </h1>
-            <p className="text-[var(--ink-300)] max-w-md text-sm leading-relaxed font-medium">
-              E2E visibility across 24 active campaigns. Current system velocity is +12% relative to last integrity sweep.
+            
+            <p className="text-slate-400 max-w-lg text-lg leading-relaxed font-medium italic">
+              Supervising <span className="text-white">24 active campaigns</span> across 4 regions. System velocity is optimized with <span className="text-emerald-400">+14.2%</span> efficiency gains this quarter.
             </p>
+
+            <div className="flex gap-4 pt-4">
+               <button className="px-8 py-4 bg-white text-slate-900 rounded-2xl font-black uppercase text-xs tracking-widest hover:scale-105 transition-transform flex items-center gap-3">
+                  Deploy Campaign <ArrowUpRight size={16} />
+               </button>
+               <button className="px-8 py-4 bg-slate-800 text-white border border-slate-700 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-slate-700 transition-colors">
+                  System Audit
+               </button>
+            </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-             <div className="bg-white/5 border border-white/10 rounded-3xl p-6 backdrop-blur-md">
-                <p className="text-[10px] font-display font-bold uppercase tracking-widest text-[var(--ink-300)] mb-1">Active Reach</p>
-                <p className="text-4xl font-display font-black text-[var(--gc-orange)]">1.2M</p>
+          <div className="lg:col-span-5 grid grid-cols-2 gap-6 h-full">
+             <div className="bg-slate-800/40 backdrop-blur-3xl border border-slate-700/50 rounded-[2rem] p-8 flex flex-col justify-between group hover:border-[var(--gc-orange-soft)] transition-colors">
+                <div>
+                   <Globe size={24} className="text-[var(--gc-orange)] mb-4" />
+                   <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Active Reach</p>
+                </div>
+                <p className="text-5xl font-display font-black text-white group-hover:scale-110 transition-transform origin-left tabular-nums">1.2M</p>
              </div>
-             <div className="bg-white/5 border border-white/10 rounded-3xl p-6 backdrop-blur-md">
-                <p className="text-[10px] font-display font-bold uppercase tracking-widest text-[var(--ink-300)] mb-1">System Load</p>
-                <p className="text-4xl font-display font-black text-white">42%</p>
+             <div className="bg-slate-800/40 backdrop-blur-3xl border border-slate-700/50 rounded-[2rem] p-8 flex flex-col justify-between group hover:border-[var(--gc-purple-soft)] transition-colors">
+                <div>
+                   <Zap size={24} className="text-[var(--gc-purple)] mb-4" />
+                   <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">System Load</p>
+                </div>
+                <p className="text-5xl font-display font-black text-white group-hover:scale-110 transition-transform origin-left tabular-nums">42<span className="text-2xl text-slate-500">%</span></p>
+             </div>
+             <div className="col-span-2 bg-gradient-to-r from-[var(--gc-orange)] to-amber-500 rounded-[2.5rem] p-8 flex items-center justify-between shadow-[0_20px_40px_rgba(232,99,12,0.3)]">
+                <div className="space-y-1 text-slate-900">
+                   <p className="text-[10px] font-black uppercase tracking-widest opacity-70">Total Revenue Recovery</p>
+                   <p className="text-4xl font-display font-black">$482.4K</p>
+                </div>
+                <div className="w-16 h-16 rounded-3xl bg-white/20 backdrop-blur-md flex items-center justify-center text-slate-900 border border-white/20">
+                   <TrendingUp size={32} />
+                </div>
              </div>
           </div>
         </div>
       </section>
 
       {/* KPI Bento Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <KPIBox label="Campaigns In Flight" value="24" trend="+4" icon={<Briefcase size={16} />} color="orange" />
-        <KPIBox label="Risk Blockers" value="3" trend="Critical" icon={<AlertTriangle size={16} />} color="red" />
-        <KPIBox label="QA Velocity" value="112" trend="Pending" icon={<CheckCircle2 size={16} />} color="purple" />
-        <KPIBox label="Daily PACE" value="8.4" trend="+1.2" icon={<TrendingUp size={16} />} color="lavender" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <KPIBox label="Campaigns In Flight" value="24" trend="+4 This Week" icon={<Briefcase size={20} />} color="orange" />
+        <KPIBox label="Critical Blockers" value="03" trend="Action Required" icon={<ShieldAlert size={20} />} color="red" />
+        <KPIBox label="QA Extraction" value="112" trend="Pending Audit" icon={<CheckCircle2 size={20} />} color="purple" />
+        <KPIBox label="Discovery Pace" value="98.2" trend="+12.4% Intensity" icon={<Sparkles size={20} />} color="lavender" />
       </div>
 
-      {/* Main Tactical Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left: Health Map */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="command-card">
-            <div className="p-6 border-b border-[var(--border)] flex justify-between items-center bg-slate-50/50">
-              <h3 className="section-title text-sm tracking-widest">Active Health Monitor</h3>
-              <button className="text-[10px] font-display font-black uppercase text-[var(--gc-orange)] hover:underline">View Fleet</button>
+      {/* Primary Analytics Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        {/* Left: Operations Console */}
+        <div className="lg:col-span-8 space-y-10">
+          <div className="command-card shadow-[0_20px_50px_rgba(0,0,0,0.02)] border-2 border-slate-50 overflow-hidden rounded-[2.5rem]">
+            <div className="px-10 py-8 border-b border-slate-50 flex justify-between items-center bg-white">
+              <div>
+                <h3 className="section-title text-base tracking-widest">Active Mission Matrix</h3>
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Real-time lifecycle synchronization</p>
+              </div>
+              <button className="px-5 py-2.5 bg-slate-50 text-[10px] font-black uppercase tracking-widest text-slate-500 rounded-xl hover:bg-slate-900 hover:text-white transition-all">
+                Full Registry
+              </button>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                  <thead>
-                   <tr>
-                     <th className="grid-header-cell">Campaign Reference</th>
-                     <th className="grid-header-cell">Lifecycle Stage</th>
-                     <th className="grid-header-cell">Operational Progress</th>
-                     <th className="grid-header-cell text-right">Health</th>
+                   <tr className="bg-slate-50/50">
+                     <th className="px-10 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">Campaign Payload</th>
+                     <th className="px-10 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">Operational Stage</th>
+                     <th className="px-10 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">Health Sync</th>
                    </tr>
                  </thead>
-                 <tbody className="divide-y divide-[var(--border)]">
+                 <tbody className="divide-y divide-slate-50 pb-4">
                     {CAMPAIGN_HEALTH.map((c) => (
-                      <tr key={c.name} className="group hover:bg-[var(--gc-purple-soft)]/20 transition-all cursor-pointer">
-                        <td className="grid-row-cell">
-                          <p className="text-sm font-bold text-[var(--ink-900)] leading-tight">{c.name}</p>
-                          <p className="text-[9px] font-display font-bold text-slate-400 uppercase mt-1">{c.owner}</p>
+                      <tr 
+                        key={c.name} 
+                        onClick={() => navigate('/campaign/123')}
+                        className="group hover:bg-slate-50/80 transition-all cursor-pointer"
+                      >
+                        <td className="px-10 py-7">
+                          <div className="flex items-center gap-4">
+                             <div className="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-slate-900 group-hover:text-white transition-all">
+                                <Briefcase size={18} />
+                             </div>
+                             <div>
+                                <p className="text-sm font-black text-slate-900 group-hover:text-[var(--gc-orange)] transition-colors">{c.name}</p>
+                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-1">{c.owner} • Mission Ops</p>
+                             </div>
+                          </div>
                         </td>
-                        <td className="grid-row-cell">
-                           <span className={cn(
-                             "stage-tag tracking-widest",
-                             c.health === 'Blocked' ? "bg-red-50 text-red-700" : "bg-[var(--gc-purple-soft)] text-[var(--gc-purple)]"
-                           )}>{c.stage}</span>
+                        <td className="px-10 py-7">
+                           <div className="flex flex-col gap-3 max-w-[200px]">
+                              <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
+                                 <span className="text-slate-400">{c.stage}</span>
+                                 <span className="text-slate-900 tabular-nums">{c.progress}%</span>
+                              </div>
+                              <div className="h-2 bg-slate-100 rounded-full overflow-hidden p-[2px]">
+                                 <div 
+                                   className={cn(
+                                     "h-full rounded-full transition-all duration-1000",
+                                     c.health === 'Blocked' ? "bg-red-500" : "bg-slate-900"
+                                   )} 
+                                   style={{ width: `${c.progress}%` }} 
+                                 />
+                              </div>
+                           </div>
                         </td>
-                        <td className="grid-row-cell min-w-[140px]">
-                            <div className="flex items-center gap-3">
-                               <div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                  <div className="h-full bg-[var(--gc-orange)]" style={{ width: `${c.progress}%` }} />
-                               </div>
-                               <span className="text-[10px] font-mono font-bold text-slate-500">{c.progress}%</span>
-                            </div>
-                        </td>
-                        <td className="grid-row-cell text-right font-display font-black uppercase text-[10px] tracking-widest">
-                           <span className={cn(
-                             c.health === 'Healthy' ? "text-emerald-600" : c.health === 'At Risk' ? "text-amber-500" : "text-red-500"
-                           )}>{c.health}</span>
+                        <td className="px-10 py-7">
+                           <div className={cn(
+                             "flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl border-2 text-[10px] font-black uppercase tracking-[0.2em] w-fit",
+                             c.health === 'Healthy' ? "bg-emerald-50 text-emerald-600 border-emerald-100" : 
+                             c.health === 'At Risk' ? "bg-amber-50 text-amber-500 border-amber-100" : 
+                             "bg-red-50 text-red-500 border-red-100 animate-pulse"
+                           )}>
+                              {c.health}
+                           </div>
                         </td>
                       </tr>
                     ))}
@@ -126,66 +186,113 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="command-card p-8 bg-white overflow-hidden relative">
-             <div className="absolute top-0 right-0 p-8 text-slate-50">
-                <Globe size={120} strokeWidth={1} />
+          <div className="command-card p-10 bg-slate-900 text-white overflow-hidden relative rounded-[2.5rem]">
+             <div className="absolute top-0 right-0 p-10 text-white/5 pointer-events-none">
+                <Globe size={180} strokeWidth={1} />
              </div>
-             <div className="relative z-10 space-y-6">
-                <h3 className="section-title text-sm tracking-widest">Global Lifecycle Bottle-Neck</h3>
-                <div className="flex items-center gap-[2px]">
-                   {STAGES.map((s, i) => (
-                     <div key={s} className="flex-1 space-y-2">
-                        <div className={cn(
-                          "h-1.5 rounded-full transition-all",
-                          i < 7 ? "bg-[var(--gc-purple)]" : i === 7 ? "bg-[var(--gc-orange)] animate-pulse shadow-[0_0_10px_rgba(232,99,12,0.5)]" : "bg-slate-100"
-                        )} />
-                        <p className={cn(
-                          "text-[8px] font-display font-bold uppercase tracking-tighter text-center",
-                          i === 7 ? "text-[var(--gc-orange)] font-black" : "text-slate-400"
-                        )}>{s}</p>
-                     </div>
-                   ))}
+             <div className="relative z-10 space-y-10">
+                <div className="flex items-center justify-between">
+                   <h3 className="section-title text-white opacity-80 text-sm tracking-widest">Global Lifecycle Radar</h3>
+                   <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-[var(--gc-purple)]" />
+                        <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Completed</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-[var(--gc-orange)]" />
+                        <span className="text-[10px] font-black uppercase tracking-widest">Current Lock</span>
+                      </div>
+                   </div>
                 </div>
-                <p className="text-xs text-[var(--ink-500)] italic border-l-2 border-[var(--gc-orange)] pl-4 py-1">
-                   <strong>Critical Path:</strong> 12 campaigns currently queued at <span className="text-[var(--gc-orange)] font-bold">Execution</span>. Lead Team intervention required for Riyadh branch logistics.
-                </p>
+
+                <div className="flex items-end gap-1 px-4 relative">
+                   {STAGES.map((s, i) => {
+                     const isCurrent = i === 7;
+                     const isPast = i < 7;
+                     return (
+                      <div key={s} className="flex-1 group cursor-pointer">
+                         <div className="relative h-24 flex flex-col justify-end items-center gap-4">
+                            <div className={cn(
+                              "w-1.5 rounded-full transition-all duration-500 group-hover:w-3",
+                              isCurrent ? "h-full bg-[var(--gc-orange)] shadow-[0_0_20px_rgba(232,99,12,0.6)]" : 
+                              isPast ? "h-16 bg-[var(--gc-purple)] opacity-50" : "h-4 bg-slate-800"
+                            )} />
+                            <div className="absolute -top-6 text-[9px] font-black rotate-[-45deg] whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                               {s}
+                            </div>
+                         </div>
+                      </div>
+                     );
+                   })}
+                </div>
+
+                <div className="flex items-start gap-4 p-6 bg-white/5 border border-white/10 rounded-3xl">
+                   <ShieldAlert size={20} className="text-[var(--gc-orange)] flex-shrink-0" />
+                   <p className="text-sm text-slate-300 leading-relaxed font-medium">
+                      <strong className="text-white">Relay Obstruction Identified:</strong> 12 campaigns currently queued at <span className="text-[var(--gc-orange)] font-black">Execution</span>. Lead Team intervention required for hyper-local logistics verification in Riyadh & Jeddah clusters.
+                   </p>
+                </div>
              </div>
           </div>
         </div>
 
-        {/* Right: Tactical Radar */}
-        <div className="space-y-6">
-           <div className="command-card p-8 bg-[var(--gc-purple)] text-white shadow-xl shadow-purple-900/20">
-              <p className="data-label text-purple-200">Total Operational Reconcile</p>
-              <p className="text-5xl font-display font-black">92%</p>
-              <div className="mt-6 flex items-center gap-2 text-[10px] font-display font-black uppercase tracking-widest text-purple-200">
-                 <ShieldAlert size={14} /> Reconfirming Stage 18 Gates
+        {/* Right: Operational Live Feed */}
+        <div className="lg:col-span-4 space-y-10">
+           <div className="bg-gradient-to-br from-indigo-900 to-indigo-950 rounded-[2.5rem] p-10 text-white shadow-2xl relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-8 text-white/10 group-hover:rotate-12 transition-transform duration-700">
+                 <ShieldCheck size={120} strokeWidth={1} />
               </div>
+              <p className="text-[10px] uppercase font-black tracking-widest text-indigo-300 opacity-80 mb-2">Confidence Score</p>
+              <h4 className="text-6xl font-display font-black mb-4">92.4<span className="text-2xl text-indigo-400">%</span></h4>
+              <p className="text-sm text-indigo-200 leading-relaxed font-medium italic">
+                 Security gates verified across all 18 operational stages. Zero leaks detected in current intake cycle.
+              </p>
            </div>
 
-           <div className="command-card bg-white p-6 space-y-6 border-b-4 border-b-[var(--gc-orange)]">
-              <div className="pb-4 border-b border-slate-50">
-                <h3 className="section-title text-xs tracking-widest">Live Escalation Radar</h3>
+           <div className="command-card bg-white p-8 space-y-8 rounded-[2.5rem] border-2 border-slate-50 shadow-[0_20px_50px_rgba(0,0,0,0.02)]">
+              <div className="pb-6 border-b border-slate-50 flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-red-50 text-red-500 flex items-center justify-center">
+                   <AlertTriangle size={18} />
+                </div>
+                <h3 className="section-title text-sm tracking-widest uppercase">Live Escalation Log</h3>
               </div>
-              <div className="space-y-4">
+              <div className="space-y-6">
                  {[
-                   { issue: 'Visit Proof Mismatch', ref: 'STC-992', user: '@lifestyle_sa' },
-                   { issue: 'Failed recovery', ref: 'RB-102', user: '@tech_omar' }
+                   { issue: 'Visit Proof Non-Sync', ref: 'STC-992', user: '@lifestyle_sa', time: '12m ago' },
+                   { issue: 'Payment Gateway Block', ref: 'ALM-142', user: '@foodie_riyadh', time: '42m ago' },
+                   { issue: 'Media Extraction Failure', ref: 'RB-102', user: '@tech_omar', time: '1h ago' }
                  ].map((issue, idx) => (
-                   <div key={idx} className="flex gap-4 items-start py-1 group cursor-pointer">
-                      <div className="w-8 h-8 rounded-xl bg-red-50 text-red-500 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                         <AlertTriangle size={16} />
+                   <div key={idx} className="flex gap-4 items-start group cursor-pointer p-4 hover:bg-slate-50 rounded-2xl transition-all">
+                      <div className="w-10 h-10 rounded-xl bg-red-50 text-red-500 flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:bg-red-500 group-hover:text-white transition-all shadow-sm">
+                         <AlertTriangle size={18} />
                       </div>
-                      <div className="space-y-0.5">
-                         <p className="text-xs font-bold text-[var(--ink-900)] leading-none">{issue.issue}</p>
-                         <p className="text-[10px] text-slate-400 font-mono italic">REF: {issue.ref} · {issue.user}</p>
+                      <div className="space-y-1">
+                         <div className="flex justify-between items-center">
+                            <p className="text-[11px] font-black text-slate-900 leading-none">{issue.issue}</p>
+                            <span className="text-[9px] font-bold text-slate-400 tabular-nums uppercase">{issue.time}</span>
+                         </div>
+                         <p className="text-[10px] text-slate-400 font-mono italic">UNIT-{issue.ref} • {issue.user}</p>
                       </div>
                    </div>
                  ))}
               </div>
-              <button className="w-full py-3 bg-slate-50 border border-slate-100 rounded-2xl text-[10px] font-display font-black uppercase tracking-widest text-slate-400 hover:bg-[var(--gc-orange-soft)] hover:text-[var(--gc-orange)] transition-all">
-                 System Sweep Log
+              <button className="w-full py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-[var(--gc-orange)] shadow-xl transition-all transform hover:translate-y-[-2px]">
+                 Deploy Tactical Sweep
               </button>
+           </div>
+
+           <div className="command-card p-10 bg-emerald-900 rounded-[2.5rem] relative overflow-hidden text-white border-none group">
+              <Activity className="absolute -bottom-4 -right-4 size-32 text-white/5 opacity-0 group-hover:opacity-100 group-hover:rotate-12 transition-all duration-700" />
+              <h4 className="text-[10px] font-black uppercase tracking-widest text-emerald-300 opacity-80 mb-4">Operations Velocity</h4>
+              <p className="text-3xl font-display font-black leading-tight">Fast-track mode active for Riyadh cluster.</p>
+              <div className="mt-8 h-1 bg-emerald-800 rounded-full overflow-hidden">
+                 <motion.div 
+                   className="h-full bg-emerald-400" 
+                   initial={{ width: 0 }}
+                   animate={{ width: '82%' }}
+                   transition={{ duration: 2 }}
+                 />
+              </div>
            </div>
         </div>
       </div>

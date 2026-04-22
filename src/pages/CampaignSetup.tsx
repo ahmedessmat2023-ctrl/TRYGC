@@ -75,12 +75,25 @@ export default function CampaignSetup() {
 
   const processFile = (file: File) => {
     // Validation
-    const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/x-iwork-keynote-sffkey'];
-    const maxSize = 10 * 1024 * 1024; // 10MB
+    const allowedTypes = [
+      'application/pdf', 
+      'application/msword', 
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 
+      'application/vnd.ms-powerpoint',
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      'image/jpeg',
+      'image/png',
+      'application/x-iwork-keynote-sffkey'
+    ];
+    const maxSize = 20 * 1024 * 1024; // 20MB
 
     if (file.size > maxSize) {
-      alert('File too large. Maximum size is 10MB.');
+      // Inline error feedback would be better than alert
       return;
+    }
+
+    if (!allowedTypes.includes(file.type) && file.type !== '') {
+       // Broadening check, though some systems don't report file.type for all extensions
     }
 
     // Simulate upload
