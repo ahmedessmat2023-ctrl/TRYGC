@@ -1,15 +1,9 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import React, { useState } from 'react';
 import { 
   AlertTriangle, 
   Search, 
   Plus, 
   Filter, 
-  ChevronRight, 
   MoreHorizontal,
   Flame,
   ShieldAlert,
@@ -39,34 +33,35 @@ export default function BlockersWorkspace() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="flex justify-between items-end">
+      <div className="flex justify-between items-end mb-10">
         <div>
+          <div className="section-kicker text-[var(--danger)]/80">Crisis Management</div>
           <h2 className="section-title text-4xl">Risk Radar</h2>
-          <p className="text-[var(--ink-700)] flex items-center gap-2 mt-1">
-            <ShieldAlert size={14} className="text-red-500" />
+          <p className="text-[var(--ink-700)] flex items-center gap-2 mt-2 font-medium">
+            <ShieldAlert size={16} className="text-[var(--danger)]" />
             Tracking {blockers.filter(b => b.status === 'Open').length} active systemic bottlenecks.
           </p>
         </div>
-        <button className="flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-2xl text-[10px] font-display font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-red-600/20">
+        <button className="flex items-center gap-2 px-6 py-3.5 bg-[var(--danger)] text-white rounded-2xl text-[12px] font-display font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-[var(--shadow-lg)] shadow-[var(--danger)]/20">
           <Plus size={18} /> Signal Escalation
         </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div className="lg:col-span-3 space-y-6">
-          <div className="command-card bg-white overflow-hidden">
-            <div className="p-4 border-b border-[var(--border)] flex items-center gap-4 bg-slate-50/30">
+          <div className="command-card bg-[var(--bg)] overflow-hidden">
+            <div className="p-5 border-b border-[var(--border)] flex items-center gap-4 bg-[var(--bg)]/50">
                <div className="relative flex-1">
-                 <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                 <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--ink-400)] transition-colors peer-focus:text-[var(--danger)]" />
                  <input 
-                   className="w-full pl-10 pr-4 py-2 text-sm outline-none font-medium bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-red-100 transition-all" 
+                   className="peer w-full pl-12 pr-4 py-3 text-[14px] outline-none font-bold text-[var(--ink-900)] bg-[var(--bg)] border border-[var(--border-strong)] rounded-xl focus:ring-[4px] focus:ring-[rgba(180,35,24,0.1)] focus:border-[var(--danger)] transition-all shadow-sm placeholder:text-[var(--ink-300)] placeholder:font-medium" 
                    placeholder="Search blockers, impacts, or owners..." 
                    value={searchQuery}
                    onChange={(e) => setSearchQuery(e.target.value)}
                  />
                </div>
-               <button className="flex items-center gap-2 px-4 py-2 h-[42px] border border-slate-200 rounded-xl text-xs font-bold text-slate-500 bg-white hover:bg-slate-50 transition-all">
-                  <Filter size={14} /> Severity Filter
+               <button className="flex items-center gap-2 px-5 py-3 h-[46px] border border-[var(--border-strong)] rounded-xl text-[12px] font-bold text-[var(--ink-700)] bg-[var(--bg)] hover:bg-[var(--ink-100)] hover:border-[var(--ink-300)] transition-all shadow-sm">
+                  <Filter size={16} /> Severity Filter
                </button>
             </div>
 
@@ -81,26 +76,26 @@ export default function BlockersWorkspace() {
                     <th className="grid-header-cell text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[var(--border)]">
+                <tbody className="divide-y divide-[var(--border)] bg-white">
                   {filteredBlockers.length > 0 ? filteredBlockers.map((b) => (
-                    <tr key={b.id} className="group hover:bg-red-50/30 transition-all">
-                      <td className="grid-row-cell">
+                    <tr key={b.id} className="group hover:bg-[var(--danger-soft)]/20 transition-all border-l-4 border-transparent hover:border-l-[var(--danger)]">
+                      <td className="grid-row-cell pl-5">
                         <div className="flex gap-4">
                           <div className={cn(
-                            "w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0",
-                            b.severity === 'Critical' ? "bg-red-100 text-red-600" : "bg-amber-100 text-amber-600"
+                            "w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm border",
+                            b.severity === 'Critical' ? "bg-red-50 text-[var(--danger)] border-red-200" : "bg-orange-50 text-[var(--warning)] border-orange-200"
                           )}>
-                            <AlertTriangle size={20} />
+                            <AlertTriangle size={22} strokeWidth={2.5} />
                           </div>
                           <div>
                             <input 
-                              className="text-sm font-bold text-slate-900 bg-transparent border-none outline-none focus:ring-1 focus:ring-red-100 rounded px-1 -mx-1 w-full"
+                              className="text-[14px] font-bold text-[var(--ink-900)] bg-transparent border-none outline-none focus:ring-2 focus:ring-[var(--danger-soft)] rounded px-1 -mx-1 w-full placeholder:text-[var(--ink-300)] transition-all"
                               value={b.summary}
                               onChange={(e) => {
                                 setBlockers(prev => prev.map(item => item.id === b.id ? { ...item, summary: e.target.value } : item));
                               }}
                             />
-                            <p className="text-[10px] text-slate-500 mt-1 max-w-md line-clamp-1 italic">{b.impact}</p>
+                            <p className="text-[12px] text-[var(--ink-500)] mt-1 max-w-md line-clamp-1 italic">{b.impact}</p>
                           </div>
                         </div>
                       </td>
@@ -109,12 +104,12 @@ export default function BlockersWorkspace() {
                            value={b.severity}
                            onChange={(e) => handleUpdateSeverity(b.id, e.target.value as any)}
                            className={cn(
-                             "text-[10px] font-display font-black uppercase tracking-widest outline-none appearance-none cursor-pointer",
-                             b.severity === 'Critical' ? "text-red-600" : 
-                             b.severity === 'High' ? "text-orange-600" : "text-amber-600"
+                             "text-[11px] font-display font-black uppercase tracking-widest outline-none appearance-none cursor-pointer bg-transparent",
+                             b.severity === 'Critical' ? "text-[var(--danger)]" : 
+                             b.severity === 'High' ? "text-orange-600 dark:text-orange-400" : "text-[var(--warning)]"
                            )}
                          >
-                           {['Low', 'Medium', 'High', 'Critical'].map(s => <option key={s} value={s}>{s}</option>)}
+                           {['Low', 'Medium', 'High', 'Critical'].map(s => <option key={s} value={s} className="text-[var(--ink-900)]">{s}</option>)}
                          </select>
                       </td>
                       <td className="grid-row-cell">
@@ -122,31 +117,36 @@ export default function BlockersWorkspace() {
                            value={b.status}
                            onChange={(e) => handleUpdateStatus(b.id, e.target.value as any)}
                            className={cn(
-                             "text-[10px] font-display font-black uppercase tracking-widest px-3 py-1 rounded-full outline-none leading-none",
-                             b.status === 'Resolved' ? "bg-emerald-50 text-emerald-600" :
-                             b.status === 'Escalated' ? "bg-red-50 text-red-600" : "bg-amber-50 text-amber-600"
+                             "text-[10px] font-display font-black uppercase tracking-widest px-3 py-1.5 rounded-full outline-none leading-none shadow-sm cursor-pointer",
+                             b.status === 'Resolved' ? "bg-[var(--success)]/10 text-[var(--success)]" :
+                             b.status === 'Escalated' ? "bg-[var(--danger-soft)] text-[var(--danger)]" : "bg-[var(--warning)]/10 text-[var(--warning)]"
                            )}
                          >
-                           {['Open', 'Resolved', 'Escalated'].map(s => <option key={s} value={s}>{s}</option>)}
+                           {['Open', 'Resolved', 'Escalated'].map(s => <option key={s} value={s} className="text-[var(--ink-900)] font-sans tracking-normal font-medium">{s}</option>)}
                          </select>
                       </td>
                       <td className="grid-row-cell">
-                         <div className="flex items-center gap-2">
-                           <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[8px] font-bold">
+                         <div className="flex items-center gap-3">
+                           <div className="w-8 h-8 rounded-full bg-[var(--bg)] border border-[var(--border)] flex items-center justify-center text-[10px] font-bold text-[var(--ink-700)]">
                              {b.ownerId?.substring(0, 2).toUpperCase()}
                            </div>
-                           <span className="text-xs font-bold text-slate-600">{b.ownerId}</span>
+                           <span className="text-[13px] font-bold text-[var(--ink-900)]">{b.ownerId}</span>
                          </div>
-                      </td>
-                      <td className="grid-row-cell text-right">
-                         <button className="p-2 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100">
-                            <MoreHorizontal size={16} />
+                       </td>
+                      <td className="grid-row-cell text-right pr-5">
+                         <button className="p-2 text-[var(--ink-400)] hover:text-[var(--danger)] hover:bg-[var(--danger-soft)] rounded-lg transition-all opacity-0 group-hover:opacity-100">
+                            <MoreHorizontal size={20} />
                          </button>
                       </td>
                     </tr>
                   )) : (
                     <tr>
-                      <td colSpan={5} className="p-12 text-center text-slate-400 italic">No mission-critical blockers detected.</td>
+                      <td colSpan={5} className="p-16 text-center">
+                        <div className="flex flex-col items-center justify-center text-[var(--ink-300)] gap-3">
+                          <CheckCircle2 size={40} strokeWidth={1.5} className="text-[var(--success)]/50" />
+                          <p className="italic font-medium">No mission-critical blockers detected.</p>
+                        </div>
+                      </td>
                     </tr>
                   )}
                 </tbody>
@@ -156,31 +156,34 @@ export default function BlockersWorkspace() {
         </div>
 
         <div className="space-y-6">
-           <div className="command-card p-8 bg-red-600 text-white shadow-xl shadow-red-900/20">
-              <p className="data-label text-red-100">Escalation Velocity</p>
-              <p className="text-5xl font-display font-black">2.4h</p>
-              <div className="mt-6 flex items-center gap-2 text-[10px] font-display font-black uppercase tracking-widest text-red-100">
-                 <Clock size={14} /> Median Response Lead
+           <div className="command-card p-8 bg-[var(--danger)] text-white shadow-xl shadow-[var(--danger)]/20 relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-4 opacity-10">
+                <ShieldAlert size={100} strokeWidth={1} />
+              </div>
+              <p className="data-label text-white/70 relative z-10">Escalation Velocity</p>
+              <p className="text-6xl font-display font-black tracking-tight relative z-10 mt-2">2.4<span className="text-4xl text-white/50">h</span></p>
+              <div className="mt-8 flex items-center gap-2 text-[11px] font-display font-black uppercase tracking-widest text-white/80 relative z-10">
+                 <Clock size={16} strokeWidth={2.5} /> Median Response Lead
               </div>
            </div>
 
-           <div className="command-card p-6 space-y-6">
-              <div className="pb-4 border-b border-slate-100">
-                 <h3 className="section-title text-xs tracking-widest">Resolution Summary</h3>
+           <div className="command-card p-6 space-y-6 bg-[var(--bg)]">
+              <div className="pb-4 border-b border-[var(--border)]">
+                 <h3 className="section-title text-[13px] tracking-widest">Resolution Summary</h3>
               </div>
               <div className="space-y-4">
                  {[
-                   { label: 'Systemic Resolution', value: '82%', icon: <CheckCircle2 className="text-emerald-500" /> },
-                   { label: 'Unmitigated Risks', value: '3 Active', icon: <Flame className="text-orange-500" /> }
+                   { label: 'Systemic Resolution', value: '82%', icon: <CheckCircle2 className="text-[var(--success)]" size={18} /> },
+                   { label: 'Unmitigated Risks', value: '3 Active', icon: <Flame className="text-[var(--warning)]" size={18} /> }
                  ].map((stat, i) => (
                    <div key={i} className="flex items-center justify-between group cursor-default">
                       <div className="flex items-center gap-3">
-                         <div className="p-2 bg-slate-50 rounded-xl group-hover:bg-slate-100 transition-all">
+                         <div className="p-2.5 bg-white border border-[var(--border)] rounded-xl group-hover:bg-[var(--ink-100)] transition-all shadow-sm">
                             {stat.icon}
                          </div>
-                         <p className="text-xs font-bold text-slate-600">{stat.label}</p>
+                         <p className="text-[13px] font-bold text-[var(--ink-900)]">{stat.label}</p>
                       </div>
-                      <p className="text-xs font-mono font-black text-slate-900">{stat.value}</p>
+                      <p className="text-[14px] font-mono font-black text-[var(--ink-900)]">{stat.value}</p>
                    </div>
                  ))}
               </div>

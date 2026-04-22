@@ -40,17 +40,18 @@ export default function QAReviewWorkspace() {
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="flex justify-between items-end">
+    <div className="max-w-[1240px] mx-auto space-y-8 pb-12 animate-in fade-in duration-500">
+      <div className="flex justify-between items-end mb-10">
         <div>
+          <div className="section-kicker">Stage 16 Operations</div>
           <h2 className="section-title text-4xl">Quality Protocol</h2>
-          <p className="text-[var(--ink-700)] flex items-center gap-2 mt-1">
-            <ShieldCheck size={14} className="text-[var(--gc-purple)]" />
-            Stage 16: Verifying posting compliance across active coverage streams.
+          <p className="text-[var(--ink-700)] flex items-center gap-2 mt-2 font-mono text-[13px]">
+            <ShieldCheck size={16} className="text-[var(--gc-purple)]" />
+            Verifying posting compliance across active coverage streams.
           </p>
         </div>
         <div className="flex gap-3">
-          <button className="flex items-center gap-2 px-6 py-3 border border-[var(--border)] rounded-2xl text-[10px] font-display font-black uppercase tracking-widest text-slate-500 bg-white hover:bg-slate-50 transition-all">
+          <button className="flex items-center gap-2 px-6 py-3 border border-[var(--border)] rounded-full text-[12px] font-display font-black uppercase tracking-widest text-[var(--ink-500)] bg-white hover:bg-[var(--bg)] hover:border-[var(--border-strong)] transition-all">
             Batch Approval
           </button>
           <button className="btn-primary flex items-center gap-2">
@@ -61,15 +62,15 @@ export default function QAReviewWorkspace() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {filteredQueue.map((item) => (
-          <div key={item.id} className="command-card flex flex-col group overflow-hidden bg-white">
+          <div key={item.id} className="command-card flex flex-col group overflow-hidden bg-[var(--bg)]">
             <div className={cn(
-              "p-4 border-b border-slate-100 flex justify-between items-center transition-colors",
-              item.status === 'Approved' ? "bg-emerald-50/50" : "bg-slate-50/25"
+              "p-5 border-b border-[var(--border)] flex justify-between items-center transition-colors shadow-sm",
+              item.status === 'Approved' ? "bg-[var(--success)]/10" : "bg-white"
             )}>
-               <div className="flex items-center gap-2">
-                 <span className="text-[10px] font-mono font-bold text-slate-400 bg-white border border-slate-200 px-2 py-0.5 rounded uppercase">{item.id}</span>
+               <div className="flex items-center gap-3">
+                 <span className="text-[11px] font-mono font-bold text-[var(--ink-500)] bg-[var(--bg)] border border-[var(--border)] px-2.5 py-1 rounded uppercase tracking-wider">{item.id}</span>
                  <input 
-                   className="text-xs font-bold bg-transparent outline-none border-none focus:ring-1 focus:ring-[var(--gc-purple-soft)] rounded px-1 -mx-1"
+                   className="text-[14px] font-bold text-[var(--ink-900)] bg-transparent outline-none border-none focus:ring-[2px] focus:ring-[var(--gc-purple-soft)] rounded px-2 -mx-2 transition-all"
                    value={item.influencer}
                    onChange={(e) => {
                      setQueue(prev => prev.map(i => i.id === item.id ? { ...i, influencer: e.target.value } : i));
@@ -77,18 +78,18 @@ export default function QAReviewWorkspace() {
                  />
                </div>
                <div className={cn(
-                 "text-[10px] font-display font-black uppercase tracking-widest px-3 py-1 rounded-full",
-                 item.status === 'Approved' ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600"
+                 "text-[10.5px] font-display font-black uppercase tracking-[1.5px] px-3.5 py-1 rounded-full border",
+                 item.status === 'Approved' ? "bg-[var(--success)]/10 text-[var(--success)] border-[var(--success)]/20" : "bg-amber-50 text-amber-600 border-amber-200"
                )}>
                  {item.status}
                </div>
             </div>
             
-            <div className="p-6 space-y-6 flex-1">
-               <div className="space-y-1">
+            <div className="p-8 space-y-6 flex-1 bg-white">
+               <div className="space-y-2">
                  <p className="data-label">Campaign Context</p>
                  <input 
-                   className="text-sm font-semibold text-slate-900 bg-transparent border-none outline-none focus:ring-1 focus:ring-[var(--gc-purple-soft)] rounded px-1 -mx-1 w-full"
+                   className="text-[16px] font-bold text-[var(--ink-900)] bg-transparent border-none outline-none focus:ring-[2px] focus:ring-[var(--gc-purple-soft)] rounded px-2 -mx-2 w-full transition-all"
                    value={item.campaign}
                    onChange={(e) => {
                      setQueue(prev => prev.map(i => i.id === item.id ? { ...i, campaign: e.target.value } : i));
@@ -96,15 +97,15 @@ export default function QAReviewWorkspace() {
                  />
                </div>
 
-               <div className="p-4 bg-slate-50 border border-slate-100 rounded-xl flex justify-between items-center hover:bg-slate-100 transition-colors group/link cursor-pointer">
+               <div className="p-5 bg-[var(--bg)] border border-[var(--border)] rounded-xl flex justify-between items-center hover:border-[var(--gc-purple-soft)] transition-colors group/link cursor-pointer shadow-sm">
                  <div className="flex items-center gap-3 text-[var(--gc-purple)] font-medium">
-                   <ExternalLink size={16} className="group-hover/link:scale-110 transition-transform" />
-                   <span className="text-sm border-b border-purple-200">Review Posting Coverage</span>
+                   <ExternalLink size={18} className="group-hover/link:scale-110 transition-transform" />
+                   <span className="text-[14px] border-b border-[var(--gc-purple)]/30 font-bold hover:border-[var(--gc-purple)] transition-colors">Review Posting Coverage</span>
                  </div>
-                 <p className="text-[10px] font-mono text-slate-400 uppercase">Received {item.receivedAt}</p>
+                 <p className="text-[11px] font-mono text-[var(--ink-500)] uppercase tracking-wider">Received {item.receivedAt}</p>
                </div>
 
-               <div className="grid grid-cols-2 gap-2">
+               <div className="grid grid-cols-2 gap-3">
                   <QACheck label="Tags Checked" checked={true} />
                   <QACheck label="Mentions Checked" checked={true} />
                   <QACheck label="Links Checked" checked={false} />
@@ -112,19 +113,19 @@ export default function QAReviewWorkspace() {
                </div>
             </div>
 
-            <div className="p-4 bg-slate-50 border-t border-slate-100 grid grid-cols-2 gap-3">
+            <div className="p-5 bg-[var(--bg)] border-t border-[var(--border)] grid grid-cols-2 gap-4">
                <button 
                   onClick={() => handleUpdateStatus(item.id, 'Fix Required')}
-                  className="flex items-center justify-center gap-2 py-3 px-4 bg-white border border-slate-200 rounded-xl text-[10px] font-display font-black uppercase tracking-widest text-red-600 hover:bg-red-50 transition-all shadow-sm"
+                  className="flex items-center justify-center gap-2 py-3 px-4 bg-white border border-[var(--border)] rounded-xl text-[11.5px] font-display font-black uppercase tracking-[1px] text-[var(--danger)] hover:bg-[var(--danger-soft)] hover:border-[rgba(180,35,24,0.2)] transition-all shadow-sm"
                >
-                 <ThumbsDown size={16} />
+                 <ThumbsDown size={18} />
                  Signal Fix
                </button>
                <button 
                   onClick={() => handleUpdateStatus(item.id, 'Approved')}
-                  className="flex items-center justify-center gap-2 py-3 px-4 bg-[var(--gc-purple)] text-white rounded-xl text-[10px] font-display font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-purple-600/20"
+                  className="flex items-center justify-center gap-2 py-3 px-4 bg-[var(--gc-purple)] text-white rounded-xl text-[11.5px] font-display font-black uppercase tracking-[1px] hover:opacity-90 transition-all shadow-[var(--shadow-sm)]"
                >
-                 <ThumbsUp size={16} />
+                 <ThumbsUp size={18} />
                  Pass Review
                </button>
             </div>
@@ -132,26 +133,27 @@ export default function QAReviewWorkspace() {
         ))}
       </div>
 
-      <div className="command-card p-6 border-l-4 border-l-[var(--gc-purple)] bg-white shadow-sm flex items-center justify-between">
-        <div className="flex gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-[var(--gc-purple-soft)] text-[var(--gc-purple)] flex items-center justify-center">
-            <ShieldCheck size={28} />
+      <div className="command-card p-8 border-l-[6px] border-l-[var(--gc-orange)] bg-[var(--bg)] shadow-[var(--shadow-sm)] flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div className="flex gap-6">
+          <div className="w-14 h-14 rounded-2xl bg-[var(--gc-orange-soft)] text-[var(--gc-orange)] flex items-center justify-center shrink-0 border border-[var(--gc-orange-mid)] shadow-sm">
+            <ShieldCheck size={32} />
           </div>
           <div>
-            <h4 className="font-display font-black uppercase text-xs tracking-widest text-slate-900">Quality Assurance Active</h4>
-            <p className="text-xs text-slate-600 max-w-2xl mt-1 leading-relaxed">
+            <h4 className="font-display font-black uppercase text-[15px] tracking-widest text-[var(--ink-900)]">Quality Assurance Active</h4>
+            <p className="text-[14px] text-[var(--ink-700)] max-w-2xl mt-1.5 leading-relaxed font-sans">
               Verify all "Posting Coverage" against operational briefs. Identify missing mentions or broken links before finalizing verification.
             </p>
           </div>
         </div>
-        <div className="flex gap-8">
+        <div className="flex gap-10 bg-white p-4 rounded-[var(--radius-lg)] border border-[var(--border)] shadow-sm">
            <div className="text-right">
               <p className="data-label">Pass Rate</p>
-              <p className="text-xl font-display font-black text-emerald-600">98.2%</p>
+              <p className="text-3xl font-display font-black text-[var(--success)]">98.2%</p>
            </div>
+           <div className="w-px bg-[var(--border)]" />
            <div className="text-right">
-              <p className="data-label">Review Velocity</p>
-              <p className="text-xl font-display font-black text-[var(--gc-purple)]">1.4m</p>
+              <p className="data-label">Velocity</p>
+              <p className="text-3xl font-display font-black text-[var(--gc-purple)]">1.4m</p>
            </div>
         </div>
       </div>
@@ -162,11 +164,11 @@ export default function QAReviewWorkspace() {
 function QACheck({ label, checked }: { label: string, checked: boolean }) {
   return (
     <div className={cn(
-      "flex items-center justify-between p-2 rounded-lg border text-[10px] font-display font-black uppercase tracking-widest transition-all",
-      checked ? "bg-emerald-50 border-emerald-100 text-emerald-600" : "bg-slate-50 border-slate-100 text-slate-400"
+      "flex items-center justify-between p-3 rounded-xl border text-[10.5px] font-display font-black uppercase tracking-[1px] transition-all",
+      checked ? "bg-[var(--success)]/10 border-[var(--success)]/20 text-[var(--success)]" : "bg-white border-[var(--border-strong)] text-[var(--ink-300)]"
     )}>
       {label}
-      {checked ? <CheckCircle2 size={12} /> : <AlertCircle size={12} />}
+      {checked ? <CheckCircle2 size={14} /> : <AlertCircle size={14} />}
     </div>
   );
 }

@@ -80,30 +80,31 @@ export default function TasksCenter() {
   };
 
   return (
-    <div className="space-y-8 pb-12 animate-in fade-in duration-500">
-      <div className="flex justify-between items-end">
+    <div className="max-w-[1240px] mx-auto space-y-8 pb-12 animate-in fade-in duration-500">
+      <div className="flex justify-between items-end mb-10">
         <div>
+          <div className="section-kicker">Core Operations</div>
           <h2 className="section-title text-4xl">Tasks Center</h2>
-          <p className="text-[var(--ink-700)] flex items-center gap-2 mt-1">
-            <CheckSquare size={14} className="text-[var(--gc-orange)]" />
+          <p className="text-[var(--ink-700)] flex items-center gap-2 mt-2 font-mono text-[13px]">
+            <CheckSquare size={16} className="text-[var(--gc-orange)]" />
             Operational queue management and inline reconciliation.
           </p>
         </div>
-        <button className="btn-primary flex items-center gap-2">
+        <button className="flex items-center gap-2 px-6 py-3 bg-[var(--gc-purple)] text-white text-[12px] font-display font-black uppercase tracking-widest rounded-full hover:opacity-90 shadow-[var(--shadow-sm)] transition-all">
           <Plus size={18} /> New Task
         </button>
       </div>
 
       <div className="command-card bg-white overflow-hidden">
-        <div className="p-4 border-b border-[var(--border)] bg-slate-50/50 flex justify-between items-center">
+        <div className="p-5 border-b border-[var(--border)] bg-[var(--bg)] flex flex-wrap gap-4 justify-between items-center">
            <div className="flex items-center gap-4">
-              <span className="text-[10px] font-display font-black uppercase tracking-widest text-slate-400">Quick Sort:</span>
+              <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[var(--ink-500)]">Quick Sort:</span>
               <SortTrigger label="Priority" active={sortConfig?.key === 'priority'} direction={sortConfig?.direction} onClick={() => handleSort('priority')} />
               <SortTrigger label="Due Date" active={sortConfig?.key === 'dueDate'} direction={sortConfig?.direction} onClick={() => handleSort('dueDate')} />
               <SortTrigger label="Campaign" active={sortConfig?.key === 'campaignId'} direction={sortConfig?.direction} onClick={() => handleSort('campaignId')} />
            </div>
-           <div className="flex items-center gap-2 text-xs font-bold text-slate-400">
-              <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.4)]" /> Overdue Risk</span>
+           <div className="flex items-center gap-2 text-xs font-bold text-[var(--ink-500)] bg-white px-4 py-2 border border-[var(--border)] rounded-full shadow-sm">
+              <span className="flex items-center gap-2 uppercase tracking-wide text-[10px] font-mono"><div className="w-2.5 h-2.5 rounded-full bg-[var(--danger)] shadow-[0_0_8px_rgba(180,35,24,0.4)]" /> Overdue Risk</span>
            </div>
         </div>
 
@@ -113,7 +114,7 @@ export default function TasksCenter() {
               <tr>
                 <th className="grid-header-cell w-[80px]">State</th>
                 <th 
-                  className="grid-header-cell cursor-pointer hover:bg-slate-50 transition-colors"
+                  className="grid-header-cell cursor-pointer hover:bg-[var(--bg)] transition-colors"
                   onClick={() => handleSort('title')}
                 >
                   <div className="flex items-center gap-2">
@@ -121,7 +122,7 @@ export default function TasksCenter() {
                   </div>
                 </th>
                 <th 
-                  className="grid-header-cell cursor-pointer hover:bg-slate-50 transition-colors"
+                  className="grid-header-cell cursor-pointer hover:bg-[var(--bg)] transition-colors"
                   onClick={() => handleSort('campaignId')}
                 >
                   <div className="flex items-center gap-2">
@@ -129,7 +130,7 @@ export default function TasksCenter() {
                   </div>
                 </th>
                 <th 
-                  className="grid-header-cell cursor-pointer hover:bg-slate-50 transition-colors"
+                  className="grid-header-cell cursor-pointer hover:bg-[var(--bg)] transition-colors"
                   onClick={() => handleSort('priority')}
                 >
                   <div className="flex items-center gap-2">
@@ -137,7 +138,7 @@ export default function TasksCenter() {
                   </div>
                 </th>
                 <th 
-                  className="grid-header-cell cursor-pointer hover:bg-slate-50 transition-colors"
+                  className="grid-header-cell cursor-pointer hover:bg-[var(--bg)] transition-colors"
                   onClick={() => handleSort('dueDate')}
                 >
                   <div className="flex items-center gap-2">
@@ -147,35 +148,35 @@ export default function TasksCenter() {
                 <th className="grid-header-cell text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[var(--border)]">
+            <tbody className="divide-y divide-[var(--border)] relative">
               {sortedTasks.map((task) => {
                 const isEditing = editingId === task.id;
                 const overdue = isPast(task.dueDate) && !task.completed;
 
                 return (
                   <tr key={task.id} className={cn(
-                    "group transition-all duration-300", 
-                    overdue && !isEditing ? "bg-red-50/10 hover:bg-red-50/20" : "hover:bg-[var(--gc-purple-soft)]/20",
-                    isEditing && "bg-[var(--gc-orange-soft)]/20"
+                    "group transition-all duration-300 relative bg-white z-0 hover:z-10", 
+                    overdue && !isEditing ? "bg-[var(--danger)]/5 hover:bg-[var(--danger)]/10" : "hover:bg-[var(--gc-purple-soft)]",
+                    isEditing && "bg-[var(--gc-orange-soft)] shadow-md"
                   )}>
-                    <td className="grid-row-cell">
+                    <td className="grid-row-cell px-6 py-5">
                        <button 
                          onClick={() => toggleStatus(task)}
                          className={cn(
-                           "w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all shadow-sm",
-                           task.completed ? "bg-emerald-500 border-emerald-500 text-white" : "bg-white border-slate-200 text-transparent hover:border-[var(--gc-orange)]"
+                           "w-7 h-7 rounded-lg border-2 flex items-center justify-center transition-all shadow-sm",
+                           task.completed ? "bg-[var(--success)] border-[var(--success)] text-white" : "bg-white border-[var(--border-strong)] text-transparent hover:border-[var(--gc-orange)]"
                          )}
                        >
-                         <Check size={14} strokeWidth={3} />
+                         <Check size={16} strokeWidth={3} />
                        </button>
                     </td>
                     <td 
-                      className="grid-row-cell min-w-[350px] cursor-text"
+                      className="grid-row-cell px-6 py-5 min-w-[350px] cursor-text"
                       onDoubleClick={() => !isEditing && startEdit(task)}
                     >
                       {isEditing ? (
                         <input 
-                          className="w-full px-3 py-2 bg-white border-2 border-[var(--gc-orange)] rounded-xl text-sm font-bold outline-none shadow-lg animate-in zoom-in-95 duration-200"
+                          className="w-full px-4 py-3 bg-white border-2 border-[var(--gc-orange)] rounded-xl text-[14px] font-bold outline-none shadow-lg animate-in zoom-in-95 duration-200"
                           value={editBuffer.title}
                           onChange={e => setEditBuffer({ ...editBuffer, title: e.target.value })}
                           autoFocus
@@ -185,74 +186,74 @@ export default function TasksCenter() {
                         <div className="flex flex-col">
                           <div className="flex items-center gap-3">
                             <span className={cn(
-                              "text-sm font-bold text-slate-900 transition-colors",
-                              task.completed && "text-slate-400 line-through decoration-emerald-500/30"
+                              "text-[15px] font-bold transition-colors",
+                              task.completed ? "text-[var(--ink-300)] line-through decoration-[var(--success)]/30" : "text-[var(--ink-900)]"
                             )}>
                               {task.title}
                             </span>
                             {overdue && (
                               <div className="relative flex h-3 w-3">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 shadow-sm shadow-red-500/40"></span>
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--danger)] opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-3 w-3 bg-[var(--danger)] shadow-sm shadow-[var(--danger)]/40"></span>
                               </div>
                             )}
                           </div>
-                          <span className="text-[10px] font-mono text-slate-400 mt-1 uppercase tracking-widest">{task.id}</span>
+                          <span className="text-[11px] font-mono text-[var(--ink-500)] mt-1.5 uppercase tracking-wider">UNIT-{task.id}</span>
                         </div>
                       )}
                     </td>
-                    <td className="grid-row-cell">
-                       <span className="px-3 py-1 bg-[var(--gc-purple-soft)] text-[var(--gc-purple)] rounded-lg text-[10px] font-display font-black uppercase tracking-tight border border-[var(--gc-purple-soft)]">
+                    <td className="grid-row-cell px-6 py-5">
+                       <span className="px-3.5 py-1.5 bg-[var(--bg)] text-[var(--ink-700)] rounded-full text-[10px] font-mono font-bold uppercase tracking-wider border border-[var(--border)] shadow-sm">
                          {task.campaignId}
                        </span>
                     </td>
-                    <td className="grid-row-cell">
+                    <td className="grid-row-cell px-6 py-5">
                        <PriorityBadge level={task.priority} />
                     </td>
                     <td 
-                      className="grid-row-cell"
+                      className="grid-row-cell px-6 py-5"
                       onDoubleClick={() => !isEditing && startEdit(task)}
                     >
                       {isEditing ? (
                         <input 
                           type="date"
-                          className="px-3 py-2 bg-white border-2 border-[var(--gc-orange)] rounded-xl text-xs font-mono font-bold outline-none shadow-lg animate-in zoom-in-95 duration-200"
+                          className="px-4 py-3 bg-white border-2 border-[var(--gc-orange)] rounded-xl text-[13px] font-mono font-bold outline-none shadow-lg animate-in zoom-in-95 duration-200"
                           value={editBuffer.dueDate ? format(editBuffer.dueDate, 'yyyy-MM-dd') : ''}
                           onChange={e => setEditBuffer({ ...editBuffer, dueDate: new Date(e.target.value).getTime() })}
                         />
                       ) : (
                         <div className={cn(
-                          "flex items-center gap-2 text-xs font-mono font-black transition-colors",
-                          overdue ? "text-red-600" : "text-slate-600"
+                          "flex items-center gap-2 text-[13px] font-mono font-bold transition-colors",
+                          overdue ? "text-[var(--danger)]" : "text-[var(--ink-700)]"
                         )}>
-                           <Calendar size={14} className={overdue ? "text-red-500 animate-pulse" : "text-slate-300"} />
+                           <Calendar size={16} className={overdue ? "text-[var(--danger)] animate-pulse" : "text-[var(--ink-300)]"} />
                            {format(task.dueDate, 'MMM dd, yyyy')}
                         </div>
                       )}
                     </td>
-                    <td className="grid-row-cell text-right">
+                    <td className="grid-row-cell px-6 py-5 text-right">
                       {isEditing ? (
                         <div className="flex items-center justify-end gap-2">
                           <button 
                             onClick={saveEdit} 
-                            className="w-8 h-8 flex items-center justify-center bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 shadow-lg shadow-emerald-500/20 active:scale-95 transition-all"
+                            className="w-10 h-10 flex items-center justify-center bg-[var(--success)] text-white rounded-xl hover:opacity-90 shadow-lg shadow-[var(--success)]/20 active:scale-95 transition-all"
                             title="Commit Changes"
                           >
-                            <Check size={16} strokeWidth={3} />
+                            <Check size={18} strokeWidth={3} />
                           </button>
                           <button 
                             onClick={cancelEdit} 
-                            className="w-8 h-8 flex items-center justify-center bg-slate-100 text-slate-400 rounded-xl hover:bg-slate-200 active:scale-95 transition-all"
+                            className="w-10 h-10 flex items-center justify-center bg-[var(--bg)] text-[var(--ink-500)] border border-[var(--border)] rounded-xl hover:bg-[var(--border)] hover:text-[var(--ink-900)] active:scale-95 transition-all"
                             title="Discard"
                           >
-                            <X size={16} strokeWidth={3} />
+                            <X size={18} strokeWidth={3} />
                           </button>
                         </div>
                       ) : (
                         <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-all">
                           <button 
                             onClick={() => startEdit(task)}
-                            className="p-2 text-slate-400 hover:text-[var(--gc-orange)] hover:bg-[var(--gc-orange-soft)] rounded-xl transition-all"
+                            className="p-2.5 text-[var(--ink-300)] hover:text-[var(--gc-orange)] hover:bg-[var(--gc-orange-soft)] rounded-md transition-all shadow-sm shadow-transparent hover:shadow-[var(--shadow-sm)]"
                             title="Edit Task"
                           >
                             <Edit2 size={16} />
@@ -276,8 +277,8 @@ function SortTrigger({ label, active, direction, onClick }: any) {
     <button 
       onClick={onClick}
       className={cn(
-        "flex items-center gap-1.5 px-3 py-1 transparent rounded-full text-[10px] font-display font-black uppercase tracking-widest transition-all",
-        active ? "bg-[var(--gc-orange)] text-white" : "text-slate-400 hover:bg-slate-200 hover:text-slate-600"
+        "flex items-center gap-1.5 px-3.5 py-1.5 transparent rounded-full text-[10px] font-display font-black uppercase tracking-[1.5px] transition-all border",
+        active ? "bg-[var(--ink-900)] text-white border-[var(--ink-900)] shadow-sm" : "border-transparent text-[var(--ink-500)] hover:bg-white hover:border-[var(--border)] hover:text-[var(--ink-900)] hover:shadow-sm"
       )}
     >
       {label}
@@ -288,12 +289,12 @@ function SortTrigger({ label, active, direction, onClick }: any) {
 
 function PriorityBadge({ level }: { level: string }) {
   const colors = {
-    High: 'bg-red-50 text-red-700 border-red-100',
-    Medium: 'bg-amber-50 text-amber-700 border-amber-100',
-    Low: 'bg-slate-50 text-slate-600 border-slate-100'
+    High: 'bg-red-50 text-red-700 border-red-200',
+    Medium: 'bg-amber-50 text-amber-700 border-amber-200',
+    Low: 'bg-[var(--bg)] text-[var(--ink-500)] border-[var(--border)]'
   };
   return (
-    <span className={cn("px-2 py-0.5 rounded-[4px] border text-[9px] font-display font-black uppercase tracking-wider", (colors as any)[level])}>
+    <span className={cn("px-2.5 py-1 rounded-[4px] border text-[9.5px] font-display font-black uppercase tracking-[1px]", (colors as any)[level])}>
       {level}
     </span>
   );

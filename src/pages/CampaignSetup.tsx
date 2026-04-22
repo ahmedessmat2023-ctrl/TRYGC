@@ -1,8 +1,3 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import React, { useState, useMemo } from 'react';
 import { 
   Settings2, 
@@ -18,11 +13,10 @@ import {
   ShieldCheck,
   Lock,
   UploadCloud,
-  ChevronRight,
-  Info,
   Search,
   X,
-  Plus
+  Plus,
+  Info
 } from 'lucide-react';
 import { cn } from '../utils';
 import { Campaign } from '../types';
@@ -62,41 +56,14 @@ export default function CampaignSetup() {
     e.preventDefault();
     setIsDragging(false);
     const files = e.dataTransfer.files;
-    if (files.length > 0) {
-      processFile(files[0]);
-    }
+    if (files.length > 0) processFile(files[0]);
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      processFile(e.target.files[0]);
-    }
+    if (e.target.files && e.target.files.length > 0) processFile(e.target.files[0]);
   };
 
   const processFile = (file: File) => {
-    // Validation
-    const allowedTypes = [
-      'application/pdf', 
-      'application/msword', 
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 
-      'application/vnd.ms-powerpoint',
-      'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-      'image/jpeg',
-      'image/png',
-      'application/x-iwork-keynote-sffkey'
-    ];
-    const maxSize = 20 * 1024 * 1024; // 20MB
-
-    if (file.size > maxSize) {
-      // Inline error feedback would be better than alert
-      return;
-    }
-
-    if (!allowedTypes.includes(file.type) && file.type !== '') {
-       // Broadening check, though some systems don't report file.type for all extensions
-    }
-
-    // Simulate upload
     setUploadingProgress(0);
     const interval = setInterval(() => {
       setUploadingProgress(prev => {
@@ -122,9 +89,7 @@ export default function CampaignSetup() {
   const handleSave = () => {
     setIsSaving(true);
     setTimeout(() => {
-      if (activeCampaign.id) {
-        dataService.updateCampaign(activeCampaign.id, activeCampaign);
-      }
+      if (activeCampaign.id) dataService.updateCampaign(activeCampaign.id, activeCampaign);
       setIsSaving(false);
     }, 800);
   };
@@ -160,25 +125,23 @@ export default function CampaignSetup() {
   );
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 pb-24 animate-in fade-in duration-500">
+    <div className="max-w-[1240px] mx-auto space-y-8 pb-24 animate-in fade-in duration-500">
       {/* Header Section */}
-      <div className="flex justify-between items-end">
+      <div className="flex justify-between items-end mb-10">
         <div className="space-y-1">
-          <div className="flex items-center gap-2 text-[10px] font-display font-black uppercase tracking-[0.2em] text-[var(--gc-orange)]">
-            <Settings2 size={12} /> Stage 5: Operational Setup
-          </div>
+          <div className="section-kicker">Stage 5 Operations</div>
           <h1 className="section-title text-4xl">Campaign Architect</h1>
-          <p className="text-[var(--ink-600)] text-sm italic">Define the logic, deliverables, and governance for <span className="font-bold text-[var(--ink-900)]">"{activeCampaign.name}"</span>.</p>
+          <p className="text-[var(--ink-700)] text-[14px]">Define the logic, deliverables, and governance for <span className="font-bold text-[var(--ink-900)]">"{activeCampaign.name}"</span>.</p>
         </div>
         <button 
           onClick={handleSave}
           disabled={isSaving}
           className={cn(
-            "btn-primary flex items-center gap-2 min-w-[140px] justify-center transition-all",
+            "btn-primary flex items-center gap-2 min-w-[170px] justify-center transition-all py-3.5",
             isSaving && "opacity-70 cursor-wait"
           )}
         >
-          {isSaving ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Save size={18} />}
+          {isSaving ? <div className="w-5 h-5 border-[3px] border-[var(--ink-900)]/30 border-t-[var(--ink-900)] rounded-full animate-spin" /> : <Save size={20} />}
           {isSaving ? 'Finalizing...' : 'Save Configuration'}
         </button>
       </div>
@@ -189,36 +152,36 @@ export default function CampaignSetup() {
         <div className="lg:col-span-2 space-y-8">
           
           {/* Section 1: Deliverables & Tracking */}
-          <section className="command-card p-8 space-y-8">
-            <div className="flex items-center gap-3 border-b border-slate-50 pb-4">
-              <div className="w-8 h-8 rounded-lg bg-[var(--gc-orange-soft)] text-[var(--gc-orange)] flex items-center justify-center">
-                <Target size={18} />
+          <section className="command-card p-8 space-y-8 bg-[var(--bg)]">
+            <div className="flex items-center gap-4 border-b border-[var(--border)] pb-5">
+              <div className="w-10 h-10 rounded-xl bg-[var(--gc-orange-soft)] text-[var(--gc-orange)] flex items-center justify-center">
+                <Target size={20} strokeWidth={2.5} />
               </div>
-              <h3 className="font-display font-black uppercase text-xs tracking-widest text-slate-900">Execution & Tracking Logic</h3>
+              <h3 className="font-display font-black uppercase text-[13px] tracking-widest text-[var(--ink-900)]">Execution & Tracking Logic</h3>
             </div>
 
             <div className="space-y-6">
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <label className="data-label flex items-center gap-2">
-                  Campaign Deliverables <Info size={12} className="text-slate-300" />
+                  Campaign Deliverables <Info size={14} className="text-[var(--ink-300)]" />
                 </label>
                 <textarea 
                   name="deliverables"
                   value={activeCampaign.deliverables || ''}
                   onChange={handleInputChange}
                   rows={2}
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-[var(--gc-orange-soft)] outline-none"
+                  className="w-full px-5 py-4 bg-white border border-[var(--border)] rounded-xl text-[14px] text-[var(--ink-900)] placeholder:text-[var(--ink-300)] focus:border-[var(--gc-orange)] focus:ring-[4px] focus:ring-[var(--gc-orange-soft)] outline-none transition-all shadow-sm"
                   placeholder="e.g. 2 Instagram Stories with swipe up, 1 TikTok integration..."
                 />
               </div>
 
-              <div className="space-y-2">
-                <label className="data-label flex items-center gap-2">Campaign Type <Info size={12} className="text-slate-300" /></label>
+              <div className="space-y-3">
+                <label className="data-label flex items-center gap-2">Campaign Type <Info size={14} className="text-[var(--ink-300)]" /></label>
                 <select 
                   name="type"
                   value={activeCampaign.type || ''}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-[var(--gc-orange-soft)] outline-none appearance-none cursor-pointer"
+                  className="w-full px-5 py-4 bg-white border border-[var(--border)] rounded-xl text-[14px] font-bold text-[var(--ink-900)] focus:border-[var(--gc-orange)] focus:ring-[4px] focus:ring-[var(--gc-orange-soft)] outline-none appearance-none cursor-pointer transition-all shadow-sm"
                 >
                   <option value="">Select Strategy...</option>
                   <option value="Influencer Marketing">Influencer Marketing</option>
@@ -230,35 +193,35 @@ export default function CampaignSetup() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="data-label flex items-center gap-2"><Hash size={12} /> Mandatory Hashtags</label>
+                <div className="space-y-3">
+                  <label className="data-label flex items-center gap-2"><Hash size={14} /> Mandatory Hashtags</label>
                   <input 
                     name="tags"
                     value={activeCampaign.tags || ''}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-[var(--gc-orange-soft)] outline-none"
+                    className="w-full px-5 py-4 bg-white border border-[var(--border)] rounded-xl text-[14px] font-mono text-[var(--ink-900)] placeholder:text-[var(--ink-300)] focus:border-[var(--gc-orange)] focus:ring-[4px] focus:ring-[var(--gc-orange-soft)] outline-none transition-all shadow-sm"
                     placeholder="#CampaignName #Vibe"
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="data-label flex items-center gap-2"><AtSign size={12} /> Required Mentions</label>
+                <div className="space-y-3">
+                  <label className="data-label flex items-center gap-2"><AtSign size={14} /> Required Mentions</label>
                   <input 
                     name="mentions"
                     value={activeCampaign.mentions || ''}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-[var(--gc-orange-soft)] outline-none"
+                    className="w-full px-5 py-4 bg-white border border-[var(--border)] rounded-xl text-[14px] font-mono text-[var(--ink-900)] placeholder:text-[var(--ink-300)] focus:border-[var(--gc-orange)] focus:ring-[4px] focus:ring-[var(--gc-orange-soft)] outline-none transition-all shadow-sm"
                     placeholder="@BrandAccount @Partner"
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="data-label flex items-center gap-2"><Link2 size={12} /> Destination Links</label>
+              <div className="space-y-3">
+                <label className="data-label flex items-center gap-2"><Link2 size={14} /> Destination Links</label>
                 <input 
                    name="links"
                    value={activeCampaign.links || ''}
                    onChange={handleInputChange}
-                   className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-[var(--gc-orange-soft)] outline-none"
+                   className="w-full px-5 py-4 bg-white border border-[var(--border)] rounded-xl text-[14px] text-[var(--ink-900)] placeholder:text-[var(--ink-300)] focus:border-[var(--gc-orange)] focus:ring-[4px] focus:ring-[var(--gc-orange-soft)] outline-none transition-all shadow-sm"
                    placeholder="https://brand.com/campaign-landing-page"
                 />
               </div>
@@ -266,49 +229,49 @@ export default function CampaignSetup() {
           </section>
 
           {/* Section 2: Product & Logistics */}
-          <section className="command-card p-8 space-y-8">
-            <div className="flex items-center gap-3 border-b border-slate-50 pb-4">
-              <div className="w-8 h-8 rounded-lg bg-[var(--gc-purple-soft)] text-[var(--gc-purple)] flex items-center justify-center">
-                <Package size={18} />
+          <section className="command-card p-8 space-y-8 bg-[var(--bg)]">
+            <div className="flex items-center gap-4 border-b border-[var(--border)] pb-5">
+              <div className="w-10 h-10 rounded-xl bg-[var(--gc-purple-soft)] text-[var(--gc-purple)] flex items-center justify-center">
+                <Package size={20} strokeWidth={2.5} />
               </div>
-              <h3 className="font-display font-black uppercase text-xs tracking-widest text-slate-900">Product & Logistics Protocol</h3>
+              <h3 className="font-display font-black uppercase text-[13px] tracking-widest text-[var(--ink-900)]">Product & Logistics Protocol</h3>
             </div>
 
             <div className="grid grid-cols-1 gap-8">
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <label className="data-label">Product / Service Details</label>
                 <textarea 
                   name="productDetails"
                   value={activeCampaign.productDetails || ''}
                   onChange={handleInputChange}
                   rows={2}
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-[var(--gc-purple-soft)] outline-none"
+                  className="w-full px-5 py-4 bg-white border border-[var(--border)] rounded-xl text-[14px] text-[var(--ink-900)] placeholder:text-[var(--ink-300)] focus:border-[var(--gc-purple)] focus:ring-[4px] focus:ring-[var(--gc-purple-soft)] outline-none transition-all shadow-sm"
                   placeholder="Describe the hero product, key features, or arrival process."
                 />
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                <div className="flex items-center gap-4">
+              <div className="flex items-center justify-between p-5 bg-white rounded-2xl border border-[var(--border)] shadow-sm">
+                <div className="flex items-center gap-5">
                   <div className={cn(
-                    "w-12 h-12 rounded-xl flex items-center justify-center transition-all",
-                    activeCampaign.visitRequired ? "bg-[var(--gc-orange)] text-white" : "bg-slate-200 text-slate-400"
+                    "w-14 h-14 rounded-2xl flex items-center justify-center transition-all",
+                    activeCampaign.visitRequired ? "bg-[var(--gc-orange)] text-white shadow-md shadow-[var(--gc-orange-soft)]" : "bg-[var(--bg)] text-[var(--ink-300)]"
                   )}>
-                    <MapPin size={20} />
+                    <MapPin size={24} />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-slate-900">Physical Visit Required?</p>
-                    <p className="text-[10px] text-slate-500 italic">Toggle if influencers must visit a physical location.</p>
+                    <p className="text-[15px] font-bold text-[var(--ink-900)]">Physical Visit Required?</p>
+                    <p className="text-[12px] text-[var(--ink-500)] italic mt-0.5">Toggle if influencers must visit a physical location.</p>
                   </div>
                 </div>
                 <button 
                   onClick={() => setActiveCampaign(prev => ({ ...prev, visitRequired: !prev.visitRequired }))}
                   className={cn(
-                    "w-14 h-8 rounded-full relative transition-all duration-300 shadow-inner px-1 flex items-center",
-                    activeCampaign.visitRequired ? "bg-emerald-500" : "bg-slate-300"
+                    "w-16 h-9 rounded-full relative transition-all duration-300 shadow-inner px-1.5 flex items-center",
+                    activeCampaign.visitRequired ? "bg-[var(--success)]" : "bg-[var(--border-strong)]"
                   )}
                 >
                   <div className={cn(
-                    "w-6 h-6 bg-white rounded-full shadow-md transition-all duration-300",
+                    "w-7 h-7 bg-white rounded-full shadow-md transition-all duration-300",
                     activeCampaign.visitRequired ? "translate-x-6" : "translate-x-0"
                   )} />
                 </button>
@@ -317,35 +280,35 @@ export default function CampaignSetup() {
           </section>
 
           {/* Section 3: Governance & Reporting */}
-          <section className="command-card p-8 space-y-8">
-            <div className="flex items-center gap-3 border-b border-slate-50 pb-4">
-              <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                <ShieldCheck size={18} />
+          <section className="command-card p-8 space-y-8 bg-[var(--bg)]">
+            <div className="flex items-center gap-4 border-b border-[var(--border)] pb-5">
+              <div className="w-10 h-10 rounded-xl bg-[var(--success)]/10 text-[var(--success)] flex items-center justify-center">
+                <ShieldCheck size={20} strokeWidth={2.5} />
               </div>
-              <h3 className="font-display font-black uppercase text-xs tracking-widest text-slate-900">Governance & Systems</h3>
+              <h3 className="font-display font-black uppercase text-[13px] tracking-widest text-[var(--ink-900)]">Governance & Systems</h3>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <label className="data-label">Approval Flow</label>
                 <select 
                   name="approvalFlow"
                   value={activeCampaign.approvalFlow || 'Internal Only'}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-emerald-200 outline-none appearance-none"
+                  className="w-full px-5 py-4 bg-white border border-[var(--border)] rounded-xl text-[14px] font-bold text-[var(--ink-900)] focus:border-[var(--success)] focus:ring-[4px] focus:ring-[var(--success)]/20 outline-none appearance-none transition-all shadow-sm"
                 >
                   <option value="Internal Only">Internal Only</option>
                   <option value="Client Approval Required">Client Approval Required</option>
                   <option value="Double Stage Verification">Double Stage Verification</option>
                 </select>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <label className="data-label">Reporting Cadence</label>
                 <select 
                   name="reportingCadence"
                   value={activeCampaign.reportingCadence || 'Weekly Cycle'}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-emerald-200 outline-none appearance-none"
+                  className="w-full px-5 py-4 bg-white border border-[var(--border)] rounded-xl text-[14px] font-bold text-[var(--ink-900)] focus:border-[var(--success)] focus:ring-[4px] focus:ring-[var(--success)]/20 outline-none appearance-none transition-all shadow-sm"
                 >
                   <option value="Daily Updates">Daily Updates</option>
                   <option value="Weekly Cycle">Weekly Cycle</option>
@@ -353,14 +316,14 @@ export default function CampaignSetup() {
                   <option value="Custom Real-Time">Custom Real-Time</option>
                 </select>
               </div>
-              <div className="md:col-span-2 space-y-2">
-                <label className="data-label flex items-center gap-2"><Lock size={12} /> Strategic Restrictions</label>
+              <div className="md:col-span-2 space-y-3">
+                <label className="data-label flex items-center gap-2 text-[var(--danger)]/80"><Lock size={14} /> Strategic Restrictions</label>
                 <textarea 
                   name="restrictions"
                   value={activeCampaign.restrictions || ''}
                   onChange={handleInputChange}
                   rows={2}
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-emerald-200 outline-none focus:border-red-100"
+                  className="w-full px-5 py-4 bg-white border border-[var(--border)] rounded-xl text-[14px] text-[var(--ink-900)] placeholder:text-[var(--ink-300)] focus:border-[var(--danger)] focus:ring-[4px] focus:ring-[rgba(180,35,24,0.1)] outline-none transition-all shadow-sm"
                   placeholder="e.g. No competitor mentions (STC, Mobily), avoid religious topics..."
                 />
               </div>
@@ -372,12 +335,12 @@ export default function CampaignSetup() {
         <div className="space-y-8">
           
           {/* Section 4: Mission Stakeholders */}
-          <section className="command-card p-6 space-y-6 bg-white overflow-visible">
-            <div className="flex items-center gap-3 border-b border-slate-50 pb-4">
-              <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
-                <Users size={18} />
+          <section className="command-card p-6 space-y-6 bg-[var(--bg)] overflow-visible">
+            <div className="flex items-center gap-4 border-b border-[var(--border)] pb-4">
+              <div className="w-10 h-10 rounded-xl bg-[var(--gc-purple-soft)] text-[var(--gc-purple)] flex items-center justify-center">
+                <Users size={20} strokeWidth={2.5} />
               </div>
-              <h3 className="font-display font-black uppercase text-xs tracking-widest text-slate-900">Command Owners</h3>
+              <h3 className="font-display font-black uppercase text-[13px] tracking-widest text-[var(--ink-900)]">Command Owners</h3>
             </div>
 
             <div className="space-y-6">
@@ -387,33 +350,33 @@ export default function CampaignSetup() {
                   <label className="data-label">Internal Ops Leads</label>
                   <button 
                     onClick={() => setShowInternalSearch(!showInternalSearch)}
-                    className="p-1 text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                    className="p-1.5 text-[var(--gc-purple)] hover:bg-[var(--gc-purple-soft)] rounded-lg transition-all"
                   >
-                    <Plus size={16} />
+                    <Plus size={18} />
                   </button>
                 </div>
                 
                 {showInternalSearch && (
                   <div className="relative animate-in slide-in-from-top-2 duration-300">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--ink-300)]" size={16} />
                     <input 
                       autoFocus
                       placeholder="Search internal leads..."
                       value={searchInternal}
                       onChange={(e) => setSearchInternal(e.target.value)}
-                      className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[10px] outline-none focus:ring-2 focus:ring-blue-100"
+                      className="w-full pl-10 pr-4 py-3 bg-white border border-[var(--border-strong)] rounded-xl text-[12px] font-bold text-[var(--ink-900)] outline-none focus:border-[var(--gc-purple)] focus:ring-[4px] focus:ring-[var(--gc-purple-soft)] transition-all shadow-sm"
                     />
-                    <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto overflow-x-hidden">
+                    <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-[var(--border)] rounded-xl shadow-[var(--shadow-lg)] z-50 max-h-56 overflow-y-auto overflow-x-hidden p-1">
                        {filteredInternal.map(u => (
                          <button 
                            key={u.name}
                            onClick={() => addOwner('internalOwners', u.name)}
-                           className="w-full text-left p-3 hover:bg-slate-50 flex items-center gap-3 border-b border-slate-50 last:border-none"
+                           className="w-full text-left p-3 hover:bg-[var(--bg)] rounded-lg flex items-center gap-3 transition-colors border-b border-transparent hover:border-[var(--border)]"
                          >
-                            <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-[10px]">{u.avatar}</div>
+                            <div className="w-10 h-10 rounded-full bg-[var(--gc-purple)]/10 text-[var(--gc-purple)] flex items-center justify-center font-bold text-[12px] shrink-0">{u.avatar}</div>
                             <div>
-                               <p className="text-[10px] font-bold text-slate-900">{u.name}</p>
-                               <p className="text-[9px] text-slate-500">{u.role}</p>
+                               <p className="text-[13px] font-bold text-[var(--ink-900)]">{u.name}</p>
+                               <p className="text-[11px] text-[var(--ink-500)] mt-0.5">{u.role}</p>
                             </div>
                          </button>
                        ))}
@@ -421,25 +384,25 @@ export default function CampaignSetup() {
                   </div>
                 )}
 
-                <div className="space-y-3">
+                <div className="space-y-2">
                    {(activeCampaign.internalOwners || []).map(ownerName => {
                      const userData = AVAILABLE_USERS.find(u => u.name === ownerName);
                      return (
-                       <div key={ownerName} className="flex items-center justify-between p-3 bg-slate-50 border border-slate-100 rounded-xl group">
-                          <div className="flex items-center gap-3">
-                             <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-[10px]">
+                       <div key={ownerName} className="flex items-center justify-between p-3.5 bg-white border border-[var(--border)] rounded-xl shadow-sm group hover:-translate-y-px transition-all">
+                          <div className="flex items-center gap-3.5">
+                             <div className="w-10 h-10 rounded-full bg-[var(--gc-purple)]/10 text-[var(--gc-purple)] flex items-center justify-center font-bold text-[11px] shrink-0">
                                {userData?.avatar || ownerName.substring(0, 2).toUpperCase()}
                              </div>
                              <div>
-                                <p className="text-[10px] font-bold text-slate-900">{ownerName}</p>
-                                <p className="text-[9px] text-slate-500">{userData?.role || 'Internal Staff'}</p>
+                                <p className="text-[13px] font-bold text-[var(--ink-900)]">{ownerName}</p>
+                                <p className="text-[11px] text-[var(--ink-500)] mt-0.5">{userData?.role || 'Internal Staff'}</p>
                              </div>
                           </div>
                           <button 
                             onClick={() => removeOwner('internalOwners', ownerName)}
-                            className="p-1.5 text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all"
+                            className="p-2 text-[var(--ink-300)] hover:text-[var(--danger)] hover:bg-[var(--danger-soft)] rounded-md opacity-0 group-hover:opacity-100 transition-all font-medium"
                           >
-                             <X size={14} />
+                             <X size={16} />
                           </button>
                        </div>
                      );
@@ -448,38 +411,38 @@ export default function CampaignSetup() {
               </div>
 
               {/* Client Owners */}
-              <div className="space-y-4 pt-4 border-t border-slate-50">
+              <div className="space-y-4 pt-6 border-t border-[var(--border)]">
                 <div className="flex items-center justify-between">
                   <label className="data-label">Client / Brand Leads</label>
                   <button 
                     onClick={() => setShowClientSearch(!showClientSearch)}
-                    className="p-1 text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                    className="p-1.5 text-[var(--gc-orange)] hover:bg-[var(--gc-orange-soft)] rounded-lg transition-all"
                   >
-                    <Plus size={16} />
+                    <Plus size={18} />
                   </button>
                 </div>
 
                 {showClientSearch && (
                   <div className="relative animate-in slide-in-from-top-2 duration-300">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--ink-300)]" size={16} />
                     <input 
                       autoFocus
                       placeholder="Search client leads..."
                       value={searchClient}
                       onChange={(e) => setSearchClient(e.target.value)}
-                      className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[10px] outline-none focus:ring-2 focus:ring-blue-100"
+                      className="w-full pl-10 pr-4 py-3 bg-white border border-[var(--border-strong)] rounded-xl text-[12px] font-bold text-[var(--ink-900)] outline-none focus:border-[var(--gc-orange)] focus:ring-[4px] focus:ring-[var(--gc-orange-soft)] transition-all shadow-sm"
                     />
-                    <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto">
+                    <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-[var(--border)] rounded-xl shadow-[var(--shadow-lg)] z-50 max-h-56 overflow-y-auto overflow-x-hidden p-1">
                        {filteredClient.map(u => (
                          <button 
                            key={u.name}
                            onClick={() => addOwner('clientOwners', u.name)}
-                           className="w-full text-left p-3 hover:bg-slate-50 flex items-center gap-3 border-b border-slate-50 last:border-none"
+                           className="w-full text-left p-3 hover:bg-[var(--bg)] rounded-lg flex items-center gap-3 transition-colors border-b border-transparent hover:border-[var(--border)]"
                          >
-                            <div className="w-8 h-8 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-[10px]">{u.avatar}</div>
+                            <div className="w-10 h-10 rounded-full bg-[var(--bg)] border border-[var(--border)] text-[var(--ink-700)] flex items-center justify-center font-bold text-[12px] shrink-0">{u.avatar}</div>
                             <div>
-                               <p className="text-[10px] font-bold text-slate-900">{u.name}</p>
-                               <p className="text-[9px] text-slate-500">{u.role}</p>
+                               <p className="text-[13px] font-bold text-[var(--ink-900)]">{u.name}</p>
+                               <p className="text-[11px] text-[var(--ink-500)] mt-0.5">{u.role}</p>
                             </div>
                          </button>
                        ))}
@@ -487,25 +450,25 @@ export default function CampaignSetup() {
                   </div>
                 )}
 
-                <div className="space-y-3">
+                <div className="space-y-2">
                    {(activeCampaign.clientOwners || []).map(ownerName => {
                      const userData = AVAILABLE_USERS.find(u => u.name === ownerName);
                      return (
-                       <div key={ownerName} className="flex items-center justify-between p-3 bg-slate-50 border border-slate-100 rounded-xl group">
-                          <div className="flex items-center gap-3">
-                             <div className="w-8 h-8 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-[10px]">
+                       <div key={ownerName} className="flex items-center justify-between p-3.5 bg-white border border-[var(--border)] rounded-xl shadow-sm group hover:-translate-y-px transition-all">
+                          <div className="flex items-center gap-3.5">
+                             <div className="w-10 h-10 rounded-full bg-[var(--bg)] border border-[var(--border)] text-[var(--ink-700)] flex items-center justify-center font-bold text-[11px] shrink-0">
                                {userData?.avatar || ownerName.substring(0, 2).toUpperCase()}
                              </div>
                              <div>
-                                <p className="text-[10px] font-bold text-slate-900">{ownerName}</p>
-                                <p className="text-[9px] text-slate-500">{userData?.role || 'Client Lead'}</p>
+                                <p className="text-[13px] font-bold text-[var(--ink-900)]">{ownerName}</p>
+                                <p className="text-[11px] text-[var(--ink-500)] mt-0.5">{userData?.role || 'Client Lead'}</p>
                              </div>
                           </div>
                           <button 
                             onClick={() => removeOwner('clientOwners', ownerName)}
-                            className="p-1.5 text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all"
+                            className="p-2 text-[var(--ink-300)] hover:text-[var(--danger)] hover:bg-[var(--danger-soft)] rounded-md opacity-0 group-hover:opacity-100 transition-all font-medium"
                           >
-                             <X size={14} />
+                             <X size={16} />
                           </button>
                        </div>
                      );
@@ -516,40 +479,40 @@ export default function CampaignSetup() {
           </section>
 
           {/* Section 5: Target Criteria */}
-          <section className="command-card p-6 space-y-6">
-             <div className="flex items-center gap-3 border-b border-slate-50 pb-4">
-              <div className="w-8 h-8 rounded-lg bg-[var(--gc-orange-soft)] text-[var(--gc-orange)] flex items-center justify-center">
-                <Target size={18} />
+          <section className="command-card p-6 space-y-6 bg-[var(--bg)]">
+             <div className="flex items-center gap-4 border-b border-[var(--border)] pb-4">
+              <div className="w-10 h-10 rounded-xl bg-[var(--gc-orange-soft)] text-[var(--gc-orange)] flex items-center justify-center">
+                <Target size={20} strokeWidth={2.5} />
               </div>
-              <h3 className="font-display font-black uppercase text-xs tracking-widest text-slate-900">Influencer Criteria</h3>
+              <h3 className="font-display font-black uppercase text-[13px] tracking-widest text-[var(--ink-900)]">Influencer Criteria</h3>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-5">
               <textarea 
                 name="influencerCriteria"
                 value={activeCampaign.influencerCriteria || ''}
                 onChange={handleInputChange}
-                rows={4}
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-xs font-medium focus:ring-2 focus:ring-[var(--gc-orange-soft)] outline-none"
+                rows={5}
+                className="w-full px-5 py-4 bg-white border border-[var(--border)] rounded-xl text-[13px] font-medium focus:border-[var(--gc-orange)] focus:ring-[4px] focus:ring-[var(--gc-orange-soft)] outline-none transition-all shadow-sm"
                 placeholder="Define required age, gender, niche, cities, and follower ranges. Be specific about brand affinity."
               />
-              <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-100 rounded-xl">
-                 <Info size={14} className="text-amber-500 flex-shrink-0" />
-                 <p className="text-[9px] text-amber-700 leading-relaxed font-bold uppercase tracking-tight">These criteria will be used to calibrate the AI Discovery engine in Stage 6.</p>
+              <div className="flex items-center gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+                 <Info size={18} className="text-amber-500 flex-shrink-0" />
+                 <p className="text-[9.5px] text-amber-700 leading-relaxed font-bold uppercase tracking-widest">These criteria will be used to calibrate the AI Discovery engine in Stage 6.</p>
               </div>
             </div>
           </section>
 
           {/* Section 6: Assets & Briefs */}
-          <section className="command-card p-6 space-y-6 overflow-hidden relative">
-             <div className="absolute top-0 right-0 p-6 text-slate-50 opacity-10">
-                <FileText size={80} strokeWidth={1} />
+          <section className="command-card p-6 space-y-6 overflow-hidden relative bg-[var(--bg)]">
+             <div className="absolute top-0 right-0 p-6 text-[var(--ink-500)] opacity-5">
+                <FileText size={100} strokeWidth={1} />
              </div>
              <div className="relative z-10 space-y-6">
-                <div className="flex items-center gap-3 border-b border-slate-50 pb-4">
-                  <div className="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center">
-                    <FileText size={18} />
+                <div className="flex items-center gap-4 border-b border-[var(--border)] pb-4">
+                  <div className="w-10 h-10 rounded-xl bg-[var(--ink-100)] text-[var(--ink-600)] flex items-center justify-center border border-[var(--border)]">
+                    <FileText size={20} strokeWidth={2.5} />
                   </div>
-                  <h3 className="font-display font-black uppercase text-xs tracking-widest text-slate-900">Mission Briefs</h3>
+                  <h3 className="font-display font-black uppercase text-[13px] tracking-widest text-[var(--ink-900)]">Mission Briefs</h3>
                 </div>
 
                 <div 
@@ -558,8 +521,8 @@ export default function CampaignSetup() {
                   onDrop={handleFileDrop}
                   onClick={() => document.getElementById('brief-upload')?.click()}
                   className={cn(
-                    "p-8 border-2 border-dashed rounded-2xl flex flex-col items-center justify-center gap-3 bg-slate-50/50 group cursor-pointer transition-all",
-                    isDragging ? "border-[var(--gc-purple)] bg-[var(--gc-purple-soft)]/20 scale-[1.02]" : "border-slate-100 hover:border-[var(--gc-purple-soft)] hover:bg-[var(--gc-purple-soft)]/10"
+                    "p-10 border-2 border-dashed rounded-2xl flex flex-col items-center justify-center gap-4 bg-white group cursor-pointer transition-all",
+                    isDragging ? "border-[var(--gc-purple)] bg-[var(--gc-purple-soft)] scale-[1.02] shadow-[var(--shadow)]" : "border-[var(--border-strong)] hover:border-[var(--gc-purple)] hover:bg-[var(--gc-purple)]/5 hover:shadow-sm"
                   )}
                 >
                    <input 
@@ -570,19 +533,19 @@ export default function CampaignSetup() {
                      accept=".pdf,.docx,.key"
                    />
                    <div className={cn(
-                     "w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center transition-colors",
-                     isDragging ? "text-[var(--gc-purple)]" : "text-slate-400 group-hover:text-[var(--gc-purple)]"
+                     "w-14 h-14 rounded-full bg-[var(--bg)] border border-[var(--border)] shadow-sm flex items-center justify-center transition-colors",
+                     isDragging ? "text-[var(--gc-purple)] bg-white border-[var(--gc-purple-soft)]" : "text-[var(--ink-400)] group-hover:text-[var(--gc-purple)] group-hover:bg-white"
                    )}>
-                      <UploadCloud size={24} />
+                      <UploadCloud size={28} />
                    </div>
                    <div className="text-center">
-                      <p className="text-xs font-bold text-slate-900">
+                      <p className="text-[14px] font-bold text-[var(--ink-900)]">
                         {uploadingProgress !== null ? `Uploading... ${uploadingProgress}%` : 'Upload Brief Guidelines'}
                       </p>
-                      <p className="text-[10px] text-slate-400 mt-1">PDF, DOCX, or Keynote (Max 10MB)</p>
+                      <p className="text-[11px] text-[var(--ink-500)] mt-1.5 uppercase font-mono tracking-wider">PDF, DOCX, or Keynote (Max 10MB)</p>
                    </div>
                    {uploadingProgress !== null && (
-                     <div className="w-48 h-1 bg-slate-200 rounded-full mt-2 overflow-hidden">
+                     <div className="w-48 h-1.5 bg-[var(--bg)] rounded-full mt-3 overflow-hidden border border-[var(--border)]">
                         <div 
                           className="h-full bg-[var(--gc-purple)] transition-all duration-300" 
                           style={{ width: `${uploadingProgress}%` }}
@@ -591,19 +554,19 @@ export default function CampaignSetup() {
                    )}
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-3">
                    {uploadedFiles.map((file, idx) => (
-                     <div key={idx} className="flex items-center justify-between p-3 bg-white border border-slate-100 rounded-xl hover:shadow-md transition-all cursor-pointer group/file">
-                        <div className="flex items-center gap-3">
+                     <div key={idx} className="flex items-center justify-between p-4 bg-white border border-[var(--border)] rounded-xl hover:shadow-md hover:border-[var(--gc-purple-soft)] transition-all cursor-pointer group/file">
+                        <div className="flex items-center gap-4">
                            <div className={cn(
-                             "w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-black italic border transition-all",
-                             file.type === 'PDF' ? "bg-red-50 text-red-500 border-red-100 group-hover/file:bg-red-500 group-hover/file:text-white" : "bg-blue-50 text-blue-500 border-blue-100 group-hover/file:bg-blue-500 group-hover/file:text-white"
+                             "w-10 h-10 rounded-xl flex items-center justify-center text-[11px] font-black italic border transition-all shadow-sm",
+                             file.type === 'PDF' ? "bg-red-50 text-red-600 border-red-200 group-hover/file:bg-red-600 group-hover/file:text-white" : "bg-[var(--gc-purple-soft)] text-[var(--gc-purple)] border-[var(--gc-purple)]/20 group-hover/file:bg-[var(--gc-purple)] group-hover/file:text-white"
                            )}>
                              {file.type}
                            </div>
                            <div>
-                              <p className="text-[11px] font-bold text-slate-900 line-clamp-1">{file.name}</p>
-                              <p className="text-[9px] text-slate-400 font-medium uppercase font-mono">{file.size} • {file.date}</p>
+                              <p className="text-[13px] font-bold text-[var(--ink-900)] line-clamp-1 group-hover/file:text-[var(--gc-purple)] transition-colors">{file.name}</p>
+                              <p className="text-[10px] text-[var(--ink-500)] font-bold uppercase font-mono tracking-widest mt-0.5">{file.size} • {file.date}</p>
                            </div>
                         </div>
                         <button 
@@ -611,9 +574,9 @@ export default function CampaignSetup() {
                             e.stopPropagation();
                             setUploadedFiles(prev => prev.filter((_, i) => i !== idx));
                           }}
-                          className="p-1.5 text-slate-300 hover:text-red-500 transition-colors"
+                          className="p-2 text-[var(--ink-300)] hover:text-white hover:bg-[var(--danger)] rounded-lg transition-all"
                         >
-                           <X size={14} />
+                           <X size={16} />
                         </button>
                      </div>
                    ))}
