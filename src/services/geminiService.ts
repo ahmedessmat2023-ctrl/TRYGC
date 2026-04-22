@@ -33,7 +33,8 @@ export async function discoverInfluencers(
   country: string, 
   niche: string, 
   followerRange: string, 
-  count: number = 6
+  count: number = 6,
+  targetCampaign: string = 'none'
 ): Promise<SuggestedInfluencer[]> {
   const ai = getAI();
   
@@ -42,8 +43,11 @@ export async function discoverInfluencers(
   Use Google Search to verify recent activity (last 30 days), follower counts, and engagement metrics.
   Return a diverse list of creators from different cities within the target country if applicable.`;
 
+  const campaignContextStr = targetCampaign !== 'none' ? `These influencers are intended for the '${targetCampaign}' campaign.` : '';
+
   const prompt = `Find ${count} high-performing influencers in ${country} for the ${niche} niche. 
   Target Follower Range: ${followerRange}.
+  ${campaignContextStr}
   
   For each influencer, you must provide:
   1. handle: The social media tag (e.g. @username).
@@ -52,7 +56,7 @@ export async function discoverInfluencers(
   4. engagement: Estimated engagement rate (e.g. 4.2%).
   5. niche: Their specific Content Pillar (e.g. Sustainable Fashion).
   6. location: Specific city and country.
-  7. relevanceReason: A 1-2 sentence tactical analysis of why they fit this specific campaign and their recent performance trends.`;
+  7. relevanceReason: Highly granular 2-3 sentence analysis detailing their recent performance patterns, specific audience alignment within the ${niche} niche, and why their unique style strategically matches constraints. Use analytical phrasing (e.g., 'Recent metrics indicate a 12% velocity surge...').`;
 
   try {
     const response = await ai.models.generateContent({

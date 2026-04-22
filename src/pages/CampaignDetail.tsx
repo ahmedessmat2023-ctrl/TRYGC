@@ -144,6 +144,64 @@ export default function CampaignDetail() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
          {/* Live Performance Feed */}
          <div className="lg:col-span-8 space-y-8">
+            
+            {/* Delivery/Visit Schedule Section */}
+            <div className="command-card rounded-3xl bg-white border border-[var(--border)] overflow-hidden shadow-sm">
+               <div className="p-8 border-b border-[var(--border)] flex justify-between items-center bg-[var(--bg)]/50">
+                  <div className="flex items-center gap-4">
+                     <div className="w-12 h-12 bg-[var(--gc-purple)]/10 text-[var(--gc-purple)] rounded-2xl flex items-center justify-center">
+                        <MapPin size={24} />
+                     </div>
+                     <div>
+                        <h3 className="section-title text-[14px]">Visit / Delivery Schedule</h3>
+                        <p className="text-[11px] text-[var(--ink-500)] font-bold uppercase tracking-widest mt-1">Manage physical logistics and timings</p>
+                     </div>
+                  </div>
+                  <button className="px-6 py-3.5 bg-[var(--gc-purple)] text-white rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-[var(--gc-purple-mid)] transition-colors shadow-[var(--shadow-md)]">
+                     Add New Entry
+                  </button>
+               </div>
+               <div className="overflow-x-auto">
+                  <table className="w-full text-left">
+                     <thead className="bg-[var(--bg)]">
+                        <tr>
+                           <th className="grid-header-cell pl-8">Creator / Influencer</th>
+                           <th className="grid-header-cell">Date & Time</th>
+                           <th className="grid-header-cell">Location / Venue</th>
+                           <th className="grid-header-cell pr-8">Logistics Notes</th>
+                        </tr>
+                     </thead>
+                     <tbody className="divide-y divide-[var(--border)]">
+                        {[
+                           { creator: '@lifestyle_sa', time: 'Nov 02, 14:00', location: 'Riyadh Core Hub', notes: 'Needs VIP parking access' },
+                           { creator: '@tech_omar', time: 'Nov 04, 10:30', location: 'Jeddah Remote Studio', notes: 'Delivery signature required' },
+                        ].map((log, i) => (
+                           <tr key={i} className="group hover:bg-[var(--bg)] transition-colors border-l-4 border-transparent hover:border-l-[var(--gc-purple)]">
+                              <td className="grid-row-cell pl-8 py-5">
+                                 <p className="text-[14px] font-black text-[var(--ink-900)] group-hover:text-[var(--gc-purple)] transition-colors">{log.creator}</p>
+                              </td>
+                              <td className="grid-row-cell py-5">
+                                 <div className="flex items-center gap-2 text-[var(--ink-700)]">
+                                    <Calendar size={14} className="text-[var(--ink-400)]" />
+                                    <span className="text-[13px] font-bold">{log.time}</span>
+                                 </div>
+                              </td>
+                              <td className="grid-row-cell py-5">
+                                 <div className="flex items-center gap-2 text-[var(--ink-700)]">
+                                    <MapPin size={14} className="text-[var(--ink-400)]" />
+                                    <span className="text-[13px] font-bold">{log.location}</span>
+                                 </div>
+                              </td>
+                              <td className="grid-row-cell py-5 pr-8">
+                                 <p className="text-[12px] text-[var(--ink-500)] italic truncate max-w-[200px]">{log.notes}</p>
+                              </td>
+                           </tr>
+                        ))}
+                     </tbody>
+                  </table>
+               </div>
+            </div>
+
             <div className="command-card rounded-3xl bg-white border border-[var(--border)] overflow-hidden shadow-sm">
                <div className="p-8 border-b border-[var(--border)] flex justify-between items-center bg-[var(--bg)]/50">
                   <div className="flex items-center gap-4">

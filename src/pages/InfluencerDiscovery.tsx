@@ -45,6 +45,7 @@ export default function InfluencerDiscovery() {
   const [statusMessage, setStatusMessage] = useState('Initializing search relays...');
   const [isDarkMode, setIsDarkMode] = useState(document.documentElement.classList.contains('dark'));
   const [criteria, setCriteria] = useState({
+    campaignContext: 'none',
     country: 'Saudi Arabia',
     niche: 'Luxury Lifestyle',
     range: '100k-500k',
@@ -121,7 +122,8 @@ export default function InfluencerDiscovery() {
         criteria.country, 
         criteria.niche, 
         criteria.range,
-        criteria.count
+        criteria.count,
+        criteria.campaignContext
       );
       setResults(influencers);
     } catch (err) {
@@ -208,6 +210,20 @@ export default function InfluencerDiscovery() {
             </div>
             
             <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="data-label flex items-center gap-2"><Layers size={14} className="text-slate-400"/> Campaign Targeting</label>
+                <select 
+                  className="w-full px-4 py-3 border border-slate-200 rounded-xl text-xs font-bold bg-white focus:ring-2 focus:ring-[var(--gc-purple-soft)] outline-none transition-all cursor-pointer shadow-sm"
+                  value={criteria.campaignContext}
+                  onChange={e => setCriteria({...criteria, campaignContext: e.target.value})}
+                >
+                  <option value="none">-- Target Registry --</option>
+                  <option value="Summer KSA">Red Bull Summer KSA</option>
+                  <option value="STC Pay Launch">STC Pay Launch</option>
+                  <option value="Almarai Fresh">Almarai Fresh</option>
+                </select>
+              </div>
+
               <div className="space-y-2">
                 <label className="data-label flex items-center gap-2"><Globe size={14} className="text-slate-400"/> Primary Market</label>
                 <input 
@@ -397,9 +413,11 @@ export default function InfluencerDiscovery() {
                          </div>
                       </div>
 
-                      <button className="w-full py-4 bg-slate-50 text-slate-900 text-xs font-black uppercase tracking-widest rounded-xl hover:bg-slate-900 hover:text-white transition-all flex items-center justify-center gap-3 border border-slate-100 group/btn">
-                        Add to Campaign Registry
-                        <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+                      <button className="w-full py-4 text-white text-[11px] font-black uppercase tracking-widest rounded-xl bg-slate-900 border-2 border-slate-900 hover:bg-[var(--gc-purple)] hover:border-[var(--gc-purple)] hover:shadow-lg hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3 overflow-hidden group/btn relative">
+                        <span className="relative z-10 flex items-center gap-2">
+                           <UserPlus size={16} /> Add to Mission Structure
+                        </span>
+                        <div className="absolute inset-0 bg-gradient-to-r from-[var(--gc-purple)] to-[var(--gc-orange)] opacity-0 group-hover/btn:opacity-10 transition-opacity" />
                       </button>
                     </div>
                   </motion.div>

@@ -21,7 +21,9 @@ import {
   Zap,
   ShieldCheck,
   Smartphone,
-  ExternalLink
+  ExternalLink,
+  Video,
+  Youtube
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { cn } from '../utils';
@@ -34,6 +36,27 @@ const PERFORMANCE_METRICS = [
   { label: 'Content Quality', value: 'A+', trend: 'Peak', baseline: 'Internal Score' },
   { label: 'Total Media Value', value: '$42K', trend: '+15%', baseline: 'Estimated EMV' },
 ];
+
+const getPlatformIcon = (platform: string) => {
+  switch(platform?.toLowerCase()) {
+    case 'instagram': return Instagram;
+    case 'tiktok': return Video;
+    case 'youtube': return Youtube;
+    case 'snapchat': return Smartphone;
+    default: return Globe;
+  }
+};
+
+const getPlatformUrl = (platform: string, handle: string) => {
+  const cleanHandle = handle?.replace('@', '');
+  switch(platform?.toLowerCase()) {
+    case 'instagram': return `https://instagram.com/${cleanHandle}`;
+    case 'tiktok': return `https://tiktok.com/@${cleanHandle}`;
+    case 'youtube': return `https://youtube.com/@${cleanHandle}`;
+    case 'snapchat': return `https://snapchat.com/add/${cleanHandle}`;
+    default: return `https://${platform?.toLowerCase()}.com/${cleanHandle}`;
+  }
+};
 
 export default function InfluencerProfile() {
   const navigate = useNavigate();
@@ -84,10 +107,20 @@ export default function InfluencerProfile() {
 
               <div className="flex flex-wrap justify-center md:justify-start items-center gap-6 text-slate-400 font-bold uppercase text-[10px] tracking-widest">
                  <div className="flex items-center gap-2">
-                    <MapPin size={14} className="text-[var(--gc-orange)]" /> {influencer.city || 'Regional Market'}
+                    <MapPin size={14} className="text-[var(--gc-orange)]" /> {influencer.city || 'Regional Market'}{influencer.country ? `, ${influencer.country}` : ''}
                  </div>
                  <div className="flex items-center gap-2">
-                    <Instagram size={14} /> {influencer.platform} Operational
+                    <a 
+                      href={getPlatformUrl(influencer.platform, influencer.username)} 
+                      target="_blank" 
+                      rel="noreferrer"
+                      className="flex items-center gap-2 hover:text-[var(--gc-orange)] hover:underline transition-colors outline-none focus:ring-2 focus:ring-[var(--gc-orange-soft)] rounded px-1 -mx-1"
+                      title={`View ${influencer.username} on ${influencer.platform}`}
+                    >
+                      {React.createElement(getPlatformIcon(influencer.platform), { size: 14 })}
+                      {influencer.platform} Operational
+                      <ExternalLink size={10} className="opacity-50" />
+                    </a>
                  </div>
                  <div className="flex items-center gap-2">
                     <Smartphone size={14} /> ID: {influencer.influencerId || influencer.id}

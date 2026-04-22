@@ -151,7 +151,7 @@ export default function CampaignSetup() {
         {/* Main Configuration Columns */}
         <div className="lg:col-span-2 space-y-8">
           
-          {/* Section 1: Deliverables & Tracking */}
+          {/* Section 1: Execution & Tracking */}
           <section className="command-card p-8 space-y-8 bg-[var(--bg)]">
             <div className="flex items-center gap-4 border-b border-[var(--border)] pb-5">
               <div className="w-10 h-10 rounded-xl bg-[var(--gc-orange-soft)] text-[var(--gc-orange)] flex items-center justify-center">
@@ -161,6 +161,23 @@ export default function CampaignSetup() {
             </div>
 
             <div className="space-y-6">
+              <div className="space-y-3">
+                <label className="data-label flex items-center gap-2">Campaign Objective <Info size={14} className="text-[var(--ink-300)]" /></label>
+                <select 
+                  name="objective"
+                  value={activeCampaign.objective || ''}
+                  onChange={handleInputChange}
+                  className="w-full px-5 py-4 bg-white border border-[var(--border)] rounded-xl text-[14px] font-bold text-[var(--ink-900)] focus:border-[var(--gc-orange)] focus:ring-[4px] focus:ring-[var(--gc-orange-soft)] outline-none appearance-none cursor-pointer transition-all shadow-sm"
+                >
+                  <option value="">Select Strategy...</option>
+                  <option value="Influencer Marketing">Influencer Marketing</option>
+                  <option value="Performance">Performance</option>
+                  <option value="Brand Awareness">Brand Awareness</option>
+                  <option value="Event Coverage">Event Coverage</option>
+                  <option value="Product Launch">Product Launch</option>
+                </select>
+              </div>
+
               <div className="space-y-3">
                 <label className="data-label flex items-center gap-2">
                   Campaign Deliverables <Info size={14} className="text-[var(--ink-300)]" />
@@ -175,21 +192,58 @@ export default function CampaignSetup() {
                 />
               </div>
 
-              <div className="space-y-3">
-                <label className="data-label flex items-center gap-2">Campaign Type <Info size={14} className="text-[var(--ink-300)]" /></label>
-                <select 
-                  name="type"
-                  value={activeCampaign.type || ''}
-                  onChange={handleInputChange}
-                  className="w-full px-5 py-4 bg-white border border-[var(--border)] rounded-xl text-[14px] font-bold text-[var(--ink-900)] focus:border-[var(--gc-orange)] focus:ring-[4px] focus:ring-[var(--gc-orange-soft)] outline-none appearance-none cursor-pointer transition-all shadow-sm"
-                >
-                  <option value="">Select Strategy...</option>
-                  <option value="Influencer Marketing">Influencer Marketing</option>
-                  <option value="Performance">Performance</option>
-                  <option value="Brand Awareness">Brand Awareness</option>
-                  <option value="Event Coverage">Event Coverage</option>
-                  <option value="Product Launch">Product Launch</option>
-                </select>
+              <div className="space-y-4">
+                <label className="data-label text-[var(--ink-900)]">Tactical Delivery Platforms *</label>
+                <div className="flex flex-wrap gap-4 mt-2">
+                  {['Instagram', 'TikTok', 'Snapchat', 'YouTube', 'X (Twitter)'].map(p => (
+                    <button 
+                      key={p} 
+                      type="button"
+                      onClick={() => {
+                        const platforms = activeCampaign.platforms || [];
+                        setActiveCampaign(prev => ({
+                          ...prev,
+                          platforms: platforms.includes(p) ? platforms.filter(x => x !== p) : [...platforms, p]
+                        }));
+                      }}
+                      className={cn(
+                        "px-6 py-2.5 text-[11px] font-display font-black uppercase tracking-widest rounded-full border-2 transition-all block",
+                        activeCampaign.platforms?.includes(p) 
+                          ? "bg-[var(--ink-900)] border-[var(--ink-900)] text-white shadow-[var(--shadow-md)]" 
+                          : "bg-white border-[var(--border)] text-[var(--ink-500)] hover:border-[var(--border-strong)] hover:text-[var(--ink-900)]"
+                      )}
+                    >
+                      {p}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <label className="data-label flex items-center gap-2">Budget Allocation *</label>
+                  <input 
+                    type="number"
+                    name="budget"
+                    value={activeCampaign.budget || ''}
+                    onChange={handleInputChange}
+                    className="w-full px-5 py-4 bg-white border border-[var(--border)] rounded-xl text-[14px] font-bold text-[var(--ink-900)] focus:border-[var(--gc-orange)] focus:ring-[4px] focus:ring-[var(--gc-orange-soft)] outline-none transition-all shadow-sm"
+                    placeholder="e.g. 50000"
+                  />
+                </div>
+                <div className="space-y-3">
+                  <label className="data-label flex items-center gap-2">Currency *</label>
+                  <select 
+                    name="budgetType"
+                    value={activeCampaign.budgetType || 'USD'}
+                    onChange={handleInputChange}
+                    className="w-full px-5 py-4 bg-white border border-[var(--border)] rounded-xl text-[14px] font-bold text-[var(--ink-900)] focus:border-[var(--gc-orange)] focus:ring-[4px] focus:ring-[var(--gc-orange-soft)] outline-none appearance-none cursor-pointer transition-all shadow-sm"
+                  >
+                    <option value="USD">USD</option>
+                    <option value="SAR">SAR</option>
+                    <option value="AED">AED</option>
+                  </select>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
