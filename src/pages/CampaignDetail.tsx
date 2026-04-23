@@ -10,6 +10,8 @@ import {
   MoreVertical,
   CheckCircle2,
   Clock,
+  Activity,
+  AlertCircle,
   Camera,
   PlayCircle
 } from 'lucide-react';
@@ -44,10 +46,18 @@ const CONTENT_FEED = [
 export default function CampaignDetail() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const [campaigns, setCampaigns] = React.useState(dataService.getCampaigns());
   
   const campaign = React.useMemo(() => {
-    return dataService.getCampaigns().find(c => c.id === id);
-  }, [id]);
+    return campaigns.find(c => c.id === id);
+  }, [id, campaigns]);
+
+  const handleUpdateStatus = (status: any) => {
+    if (id) {
+       const updated = dataService.updateCampaign(id, { status });
+       setCampaigns([...updated]);
+    }
+  };
 
   if (!campaign) {
     return (
@@ -93,24 +103,96 @@ export default function CampaignDetail() {
                     {STAGE_NAMES[campaign.stage as keyof typeof STAGE_NAMES] || 'Execution Phase'}
                  </div>
                  <div className="w-1.5 h-1.5 rounded-full bg-[var(--ink-300)]" />
+                 
+                 <div className="relative group/status flex items-center">
+                    <label className={cn(
+                      "flex items-center justify-center px-4 py-1.5 rounded-lg border text-[11px] font-black uppercase tracking-widest gap-2 cursor-pointer transition-all hover:scale-105 shadow-sm",
+                      campaign.status === 'Active' ? "bg-emerald-50 text-emerald-600 border-emerald-200" :
+                      campaign.status === 'Blocked' ? "bg-red-50 text-red-600 border-red-200" :
+                      campaign.status === 'Closed' ? "bg-slate-100 text-slate-500 border-slate-200" :
+                      "bg-amber-50 text-amber-600 border-amber-200"
+                    )}>
+                      {campaign.status === 'Active' && <Activity size={12} strokeWidth={3} />}
+                      {campaign.status === 'Blocked' && <AlertCircle size={12} strokeWidth={3} />}
+                      {campaign.status === 'Closed' && <CheckCircle2 size={12} strokeWidth={3} />}
+                      {campaign.status === 'On Hold' && <Clock size={12} strokeWidth={3} />}
+                      
+                      <select 
+                        value={campaign.status}
+                        onChange={(e) => handleUpdateStatus(e.target.value as any)}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        title="Change Status"
+                      >
+                        {['Active', 'Blocked', 'Closed', 'On Hold'].map(s => <option key={s} value={s}>{s}</option>)}
+                      </select>
+                      {campaign.status}
+                    </label>
+                 </div>
+
+                 <div className="w-1.5 h-1.5 rounded-full bg-[var(--ink-300)]" />
                  <span className="text-[11px] font-black uppercase tracking-widest text-[var(--ink-400)]">ID: {campaign.id}</span>
               </div>
               <h1 className="text-6xl font-display font-black tracking-tight text-[var(--ink-900)]">
-                 {campaign.name.split(' ').slice(0, -1).join(' ')} <br />
-                 <span className="text-[var(--gc-purple)]">{campaign.name.split(' ').slice(-1)} Heartbeat.</span>
+                 <input 
+                   className="bg-transparent border-none outline-none focus:ring-[4px] focus:ring-[var(--gc-purple-soft)] rounded-xl px-4 py-1 -mx-4 transition-all w-full cursor-text hover:bg-white focus:bg-white"
+                   value={campaign.name}
+                   onChange={(e) => {
+                     const updated = dataService.updateCampaign(campaign.id!, { name: e.target.value });
+                     setCampaigns(updated);
+                   }}
+                 />
               </h1>
               <div className="flex flex-wrap items-center gap-6 pt-2">
                  <div className="flex items-center gap-2 text-[var(--ink-500)]">
                     <MapPin size={18} className="text-[var(--ink-400)]" />
-                    <span className="text-[12px] font-bold uppercase tracking-widest">{campaign.city || 'Regional Markets'}</span>
+                    <input 
+                      className="text-[12px] font-bold uppercase tracking-widest bg-transparent border-none outline-none focus:ring-[2px] focus:ring-[var(--gc-orange-soft)] rounded-lg px-2 py-1 -mx-2 transition-all w-[140px] cursor-text hover:bg-white focus:bg-white"
+                      value={campaign.city || ''}
+                      placeholder="Location..."
+                      onChange={(e) => {
+                        const updated = dataService.updateCampaign(campaign.id!, { city: e.target.value });
+                        setCampaigns(updated);
+                      }}
+                    />
                  </div>
                  <div className="flex items-center gap-2 text-[var(--ink-500)]">
                     <Calendar size={18} className="text-[var(--ink-400)]" />
-                    <span className="text-[12px] font-bold uppercase tracking-widest">{campaign.startDate ? `${campaign.startDate} - ${campaign.endDate}` : 'Timeline Undefined'}</span>
+                    <div className="flex items-center gap-1">
+                       <input 
+                         type="date"
+                         className="text-[12px] font-bold uppercase tracking-widest bg-transparent border-none outline-none focus:ring-[2px] focus:ring-[var(--gc-orange-soft)] rounded-lg px-2 py-1 -mx-2 transition-all cursor-pointer hover:bg-white focus:bg-white"
+                         value={campaign.startDate || ''}
+                         onChange={(e) => {
+                           const updated = dataService.updateCampaign(campaign.id!, { startDate: e.target.value });
+                           setCampaigns(updated);
+                         }}
+                       />
+                       <span className="text-[10px] text-[var(--ink-300)]">—</span>
+                       <input 
+                         type="date"
+                         className="text-[12px] font-bold uppercase tracking-widest bg-transparent border-none outline-none focus:ring-[2px] focus:ring-[var(--gc-orange-soft)] rounded-lg px-2 py-1 -mx-2 transition-all cursor-pointer hover:bg-white focus:bg-white"
+                         value={campaign.endDate || ''}
+                         onChange={(e) => {
+                           const updated = dataService.updateCampaign(campaign.id!, { endDate: e.target.value });
+                           setCampaigns(updated);
+                         }}
+                       />
+                    </div>
                  </div>
                  <div className="flex items-center gap-2 text-[var(--ink-500)]">
                     <Users size={18} className="text-[var(--ink-400)]" />
-                    <span className="text-[12px] font-bold uppercase tracking-widest">{campaign.targetInfluencers} Target Creators</span>
+                    <div className="flex items-center gap-2">
+                       <input 
+                         type="number"
+                         className="text-[12px] font-bold uppercase tracking-widest bg-transparent border-none outline-none focus:ring-[2px] focus:ring-[var(--gc-purple-soft)] rounded-lg px-2 py-1 -mx-2 transition-all w-[60px] cursor-text hover:bg-white focus:bg-white font-mono"
+                         value={campaign.targetInfluencers}
+                         onChange={(e) => {
+                           const updated = dataService.updateCampaign(campaign.id!, { targetInfluencers: parseInt(e.target.value) || 0 });
+                           setCampaigns(updated);
+                         }}
+                       />
+                       <span className="text-[12px] font-bold uppercase tracking-widest">Target Creators</span>
+                    </div>
                  </div>
               </div>
            </div>

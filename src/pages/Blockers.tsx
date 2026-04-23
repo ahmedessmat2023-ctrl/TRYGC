@@ -106,7 +106,7 @@ export default function BlockersWorkspace() {
                            className={cn(
                              "text-[11px] font-display font-black uppercase tracking-widest outline-none appearance-none cursor-pointer bg-transparent",
                              b.severity === 'Critical' ? "text-[var(--danger)]" : 
-                             b.severity === 'High' ? "text-orange-600 dark:text-orange-400" : "text-[var(--warning)]"
+                             b.severity === 'High' ? "text-orange-600" : "text-[var(--warning)]"
                            )}
                          >
                            {['Low', 'Medium', 'High', 'Critical'].map(s => <option key={s} value={s} className="text-[var(--ink-900)]">{s}</option>)}

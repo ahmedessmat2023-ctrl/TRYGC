@@ -90,9 +90,10 @@ export default function InfluencerProfile() {
   const navigate = useNavigate();
   const { id } = useParams();
 
+  const [influencers, setInfluencers] = React.useState(dataService.getInfluencers());
   const influencer = React.useMemo(() => {
-    return dataService.getInfluencers().find(i => i.id === id);
-  }, [id]);
+    return influencers.find(i => i.id === id);
+  }, [id, influencers]);
 
   const theme = React.useMemo(() => {
     if (!influencer) return PLATFORM_THEMES.default;

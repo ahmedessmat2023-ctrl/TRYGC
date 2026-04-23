@@ -70,43 +70,46 @@ const menuGroups = [
 
 export function Sidebar() {
   return (
-    <aside className="w-[300px] border-r border-[var(--border)] bg-white h-screen flex flex-col flex-shrink-0 shadow-[var(--shadow-sm)] relative z-20">
-      <div className="p-8 pb-8 border-b border-[var(--border)] mb-6">
-        <div className="flex items-center gap-4">
-          <div className="w-[44px] h-[44px] bg-transparent border-[4px] border-[var(--gc-orange)] text-[var(--gc-orange)] rounded-full flex relative items-center justify-center font-display font-black text-2xl group cursor-pointer">
-             {/* Simple CSS-based logo mark inspired by the HTML SVG */}
-             <div className="absolute w-[8px] h-[8px] bg-[var(--gc-orange)] rounded-full" />
-             <div className="absolute top-[-6px] right-[-6px] w-[5px] h-[5px] bg-[var(--gc-purple)] rounded-full" />
-          </div>
+    <aside className="w-72 border-r border-[var(--border)] bg-[rgba(251,250,252,0.85)] backdrop-blur-xl h-screen flex flex-col flex-shrink-0 relative z-50">
+      <div className="p-8 pb-10">
+        <div className="flex items-center gap-3">
+          <svg className="w-10 h-10" style={{ flexShrink: 0 }}>
+            <symbol id="gc-mark-sidebar" viewBox="0 0 56 56">
+              <circle cx="22" cy="20" r="15" stroke="#E8630C" strokeWidth="4.5" fill="none"/>
+              <circle cx="22" cy="20" r="6.8" fill="#E8630C"/>
+              <circle cx="40" cy="9" r="3.6" fill="#52358C"/>
+              <path d="M 46 36 A 10 10 0 1 0 36 46 L 36 52 L 42 46 Z" fill="#52358C"/>
+            </symbol>
+            <use href="#gc-mark-sidebar"/>
+          </svg>
           <div>
-            <h1 className="text-[22px] font-display font-extrabold tracking-[1px] text-[var(--ink-900)] leading-none">
+            <h2 className="font-display font-black text-[1.1rem] leading-none tracking-tight text-[var(--ink-900)] uppercase">
               TRY<span className="text-[var(--gc-orange)]">GC</span>
-            </h1>
-            <p className="text-[10.5px] font-display font-bold text-[var(--ink-500)] uppercase tracking-[1.8px] mt-1">Grand Community</p>
+            </h2>
+            <p className="font-mono text-[9px] uppercase tracking-widest text-[var(--ink-300)] mt-1 font-bold">Brand Portal V4</p>
           </div>
         </div>
       </div>
       
-      <nav className="flex-1 px-5 overflow-y-auto pb-10 space-y-8 custom-scrollbar">
-        {menuGroups.map((group) => (
-          <div key={group.title} className="space-y-2">
-            <h4 className="px-4 text-[10.5px] font-display font-extrabold uppercase tracking-[0.2em] text-[var(--ink-500)] mb-4">{group.title}</h4>
-            <div className="space-y-1">
+      <nav className="flex-1 overflow-y-auto pb-10 space-y-6 custom-scrollbar">
+        {menuGroups.map((group, idx) => (
+          <div key={group.title} className="space-y-1">
+            <p className="px-8 py-2 text-[9px] font-mono uppercase tracking-widest text-[var(--ink-300)] font-bold">
+              {idx.toString().padStart(2, '0')} {group.title}
+            </p>
+            <div className="space-y-0.5">
               {group.items.map((item) => (
                 <NavLink
                   key={item.path}
                   to={item.path}
                   className={({ isActive }) => cn(
-                    "flex items-center gap-3 px-4 py-3 rounded-[var(--radius-xl)] text-[13px] font-display font-bold uppercase tracking-widest transition-all",
+                    "flex items-center gap-3 px-8 py-2.5 text-[1.05rem] font-display font-semibold uppercase tracking-wider transition-all border-l-[3.5px]",
                     isActive 
-                      ? "bg-[var(--gc-orange-soft)] text-[var(--gc-orange)] shadow-sm" 
-                      : "text-[var(--ink-700)] hover:bg-[var(--bg)] hover:text-[var(--gc-orange)]"
+                      ? "bg-[var(--gc-orange-soft)] text-[var(--gc-orange)] border-l-[var(--gc-orange)] shadow-sm" 
+                      : "text-[var(--ink-500)] border-l-transparent hover:bg-[var(--gc-orange-soft)] hover:text-[var(--gc-orange)] hover:border-l-[var(--gc-orange)]/50"
                   )}
                 >
-                  <item.icon size={18} className={cn(
-                    "transition-transform",
-                    "group-hover/nav:scale-110"
-                  )} />
+                  <item.icon size={18} />
                   {item.label}
                 </NavLink>
               ))}
@@ -115,15 +118,15 @@ export function Sidebar() {
         ))}
       </nav>
       
-      <div className="p-8 border-t border-[var(--border)] bg-[var(--bg)]">
+      <div className="p-8 border-t border-[var(--border)] bg-white/40">
         <div className="flex items-center justify-between mb-4">
-           <span className="text-[10.5px] font-display font-bold uppercase tracking-widest text-[var(--gc-orange)]">System Link</span>
-           <div className="w-2 h-2 rounded-full bg-[var(--success)] animate-pulse" />
+           <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[var(--gc-orange)]">Operational Status</span>
+           <div className="w-2.5 h-2.5 rounded-full bg-[var(--success)] shadow-[0_0_8px_var(--success)] animate-pulse" />
         </div>
-        <div className="flex items-center gap-2 text-[10px] font-display font-bold uppercase tracking-[2px] text-[var(--ink-500)]">
+        <div className="flex flex-wrap items-center gap-0 text-[10px] font-display font-black uppercase tracking-[1.5px]">
            <span className="text-[var(--gc-orange)]">SPEAK.</span> 
-           <span className="text-[var(--gc-purple)]">CONNECT.</span> 
-           <span className="text-[var(--gc-purple)]">IMPACT.</span>
+           <span className="text-[var(--gc-purple)] ml-1">CONNECT.</span> 
+           <span className="text-[var(--gc-purple)] ml-1">IMPACT.</span>
         </div>
       </div>
     </aside>

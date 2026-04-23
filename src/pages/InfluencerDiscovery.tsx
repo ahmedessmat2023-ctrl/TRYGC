@@ -44,7 +44,6 @@ export default function InfluencerDiscovery() {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<SuggestedInfluencer[]>([]);
   const [statusMessage, setStatusMessage] = useState('Initializing search relays...');
-  const [isDarkMode, setIsDarkMode] = useState(document.documentElement.classList.contains('dark'));
   const [criteria, setCriteria] = useState({
     campaignContext: 'none',
     country: 'Saudi Arabia',
@@ -52,16 +51,6 @@ export default function InfluencerDiscovery() {
     range: '100k-500k',
     count: 20
   });
-
-  const toggleTheme = () => {
-    if (isDarkMode) {
-      document.documentElement.classList.remove('dark');
-      setIsDarkMode(false);
-    } else {
-      document.documentElement.classList.add('dark');
-      setIsDarkMode(true);
-    }
-  };
 
   const handleExport = () => {
     if (results.length === 0) {
@@ -145,13 +134,6 @@ export default function InfluencerDiscovery() {
            disabled={results.length === 0}
          >
            <Download size={14} /> Export CSV
-         </button>
-         <button 
-           onClick={toggleTheme}
-           className="btn-primary !py-2 !px-4 !text-[10px] flex items-center gap-2 bg-[var(--ink-900)] text-white hover:bg-[var(--gc-purple)]"
-         >
-           {isDarkMode ? <Sun size={14} /> : <Moon size={14} />} 
-           {isDarkMode ? 'Light Mode' : 'Dark Mode'}
          </button>
       </div>
 

@@ -10,6 +10,9 @@ import {
   ChevronDown, 
   Calendar, 
   AlertCircle, 
+  AlertTriangle,
+  Zap,
+  Minus,
   Edit2, 
   Check, 
   X,
@@ -293,13 +296,34 @@ function SortTrigger({ label, active, direction, onClick }: any) {
 }
 
 function PriorityBadge({ level }: { level: string }) {
-  const colors = {
-    High: 'bg-red-50 text-red-700 border-red-200',
-    Medium: 'bg-amber-50 text-amber-700 border-amber-200',
-    Low: 'bg-[var(--bg)] text-[var(--ink-500)] border-[var(--border)]'
+  const configs: Record<string, { styles: string, icon: any }> = {
+    Critical: { 
+      styles: 'bg-red-600 text-white border-red-700 shadow-[0_0_12px_rgba(220,38,38,0.3)]', 
+      icon: AlertTriangle 
+    },
+    High: { 
+      styles: 'bg-red-50 text-red-700 border-red-200', 
+      icon: Zap 
+    },
+    Medium: { 
+      styles: 'bg-amber-50 text-amber-700 border-amber-200', 
+      icon: ChevronUp 
+    },
+    Low: { 
+      styles: 'bg-slate-50 text-slate-500 border-slate-200', 
+      icon: Minus 
+    }
   };
+
+  const config = configs[level] || configs.Low;
+  const Icon = config.icon;
+
   return (
-    <span className={cn("px-2.5 py-1 rounded-[4px] border text-[9.5px] font-display font-black uppercase tracking-[1px]", (colors as any)[level])}>
+    <span className={cn(
+      "px-3 py-1.5 rounded-lg border text-[9px] font-display font-black uppercase tracking-[1.5px] flex items-center gap-2 w-fit transition-all hover:scale-105", 
+      config.styles
+    )}>
+      <Icon size={12} strokeWidth={3} />
       {level}
     </span>
   );
