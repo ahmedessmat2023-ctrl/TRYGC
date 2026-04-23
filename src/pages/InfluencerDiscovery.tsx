@@ -33,7 +33,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../utils';
-import { discoverInfluencers, SuggestedInfluencer } from '../services/geminiService';
+import { discoverInfluencers, SuggestedInfluencer, consultStrategicAI, StrategicConsultation } from '../services/geminiService';
 
 const PLATFORM_ICONS: Record<string, any> = {
   Instagram: Instagram,
@@ -62,6 +62,58 @@ export default function InfluencerDiscovery() {
     range: '100k-500k',
     count: 20
   });
+
+  const [chatMessages, setChatMessages] = useState<{ role: 'user' | 'model', content: string, refinements?: any }[]>([
+    { role: 'model', content: "I'm your Strategic Consultant. Tell me more about your campaign goals and I'll help you refine these search parameters for maximum impact." }
+  ]);
+  const [chatInput, setChatInput] = useState('');
+  const [isConsulting, setIsConsulting] = useState(false);
+
+  const handleConsult = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!chatInput.trim() || isConsulting) return;
+
+    const userMsg = chatInput;
+    setChatInput('');
+    setChatMessages(prev => [...prev, { role: 'user', content: userMsg }]);
+    setIsConsulting(true);
+
+    try {
+      const history = chatMessages.map(m => ({ role: m.role, content: m.content }));
+      const response = await consultStrategicAI(userMsg, history, criteria);
+      setChatMessages(prev => [...prev, { 
+        role: 'model', 
+        content: response.message, 
+        refinements: response.suggestedRefinements 
+      }]);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsConsulting(false);
+    }
+  };
+
+  const applyRefinements = (ref: any) => {
+    const updatedCriteria = { ...criteria, ...ref };
+    setCriteria(updatedCriteria);
+    setChatMessages(prev => [...prev, { role: 'model', content: "Parameters updated. Deploying new extraction..." }]);
+    
+    // Explicitly call search with the updated criteria context
+    setLoading(true);
+    discoverInfluencers(
+        updatedCriteria.country, 
+        updatedCriteria.niche, 
+        updatedCriteria.range,
+        updatedCriteria.count,
+        updatedCriteria.campaignContext
+    ).then(influencers => {
+        setResults(influencers);
+        setLoading(false);
+    }).catch(err => {
+        console.error(err);
+        setLoading(false);
+    });
+  };
 
   const handleAddToMission = (idx: number) => {
     setAddedIds(prev => new Set([...Array.from(prev), idx]));
@@ -126,8 +178,8 @@ export default function InfluencerDiscovery() {
     }
   }, [loading]);
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSearch = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     setLoading(true);
     try {
       const influencers = await discoverInfluencers(
@@ -140,7 +192,6 @@ export default function InfluencerDiscovery() {
       setResults(influencers);
     } catch (err) {
       console.error(err);
-      // Fallback or error handled by parent/notification
     } finally {
       setLoading(false);
     }
@@ -160,8 +211,8 @@ export default function InfluencerDiscovery() {
       </div>
 
       {/* Immersive Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-slate-900 p-10 rounded-[2rem] border border-slate-800 shadow-2xl relative overflow-hidden group">
-        <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none group-hover:opacity-10 transition-opacity">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-white p-10 rounded-[2rem] border border-slate-200 shadow-2xl relative overflow-hidden group">
+        <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none group-hover:opacity-10 transition-opacity text-slate-200">
            <Cpu size={240} strokeWidth={1} />
         </div>
         
@@ -172,29 +223,29 @@ export default function InfluencerDiscovery() {
              </div>
              <div className="flex -space-x-2">
                 {[1,2,3].map(i => (
-                  <div key={i} className="w-5 h-5 rounded-full border-2 border-slate-900 bg-slate-800 flex items-center justify-center">
-                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  </div>
+                   <div key={i} className="w-5 h-5 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center">
+                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                   </div>
                 ))}
              </div>
           </div>
           <div>
-            <h1 className="text-5xl font-display font-black text-white tracking-tighter leading-none mb-2">
+            <h1 className="text-5xl font-display font-black text-slate-900 tracking-tighter leading-none mb-2">
               AI Discovery <span className="text-[var(--gc-purple)]">Engine</span>
             </h1>
-            <p className="text-slate-400 text-lg max-w-xl font-medium leading-relaxed italic">
-              Deploying Gemini-driven search grounding to identify <span className="text-white">authentic creator-market alignment</span> in real-time.
+            <p className="text-slate-500 text-lg max-w-xl font-medium leading-relaxed italic">
+              Deploying Gemini-driven search grounding to identify <span className="text-slate-900">authentic creator-market alignment</span> in real-time.
             </p>
           </div>
         </div>
 
         <div className="flex gap-4 relative z-10 w-full md:w-auto">
-          <div className="bg-slate-800/50 backdrop-blur-xl border border-slate-700 p-4 rounded-2xl flex flex-col justify-center items-center gap-1 min-w-[120px]">
-             <span className="text-[10px] uppercase font-black text-slate-500 tracking-widest">Efficiency</span>
-             <span className="text-2xl font-mono font-black text-emerald-400">98.4%</span>
+          <div className="bg-slate-50 border border-slate-100 p-4 rounded-2xl flex flex-col justify-center items-center gap-1 min-w-[120px]">
+             <span className="text-[10px] uppercase font-black text-slate-400 tracking-widest">Efficiency</span>
+             <span className="text-2xl font-mono font-black text-emerald-600">98.4%</span>
           </div>
-          <div className="bg-slate-800/50 backdrop-blur-xl border border-slate-700 p-4 rounded-2xl flex flex-col justify-center items-center gap-1 min-w-[120px]">
-             <span className="text-[10px] uppercase font-black text-slate-500 tracking-widest">Grounding</span>
+          <div className="bg-slate-50 border border-slate-100 p-4 rounded-2xl flex flex-col justify-center items-center gap-1 min-w-[120px]">
+             <span className="text-[10px] uppercase font-black text-slate-400 tracking-widest">Grounding</span>
              <span className="text-2xl font-mono font-black text-[var(--gc-orange)]">Search</span>
           </div>
         </div>
@@ -297,16 +348,77 @@ export default function InfluencerDiscovery() {
             </div>
           </motion.form>
 
-          {/* Quick Insights Card */}
-          <div className="command-card p-6 bg-[var(--gc-purple)] text-white relative overflow-hidden rounded-[1.5rem] border-none group cursor-pointer" onClick={() => navigate('/chat')}>
-             <MessageSquare size={80} className="absolute -bottom-4 -right-4 opacity-10 group-hover:scale-110 transition-transform" />
-             <div className="relative z-10">
-                <h4 className="text-[10px] font-black uppercase tracking-widest opacity-80 mb-4">Strategic Console</h4>
-                <p className="text-lg font-bold tracking-tight leading-tight mb-2">Need more precision? Converse with the Mission Strategist.</p>
-                <div className="flex items-center gap-2 text-[10px] font-black uppercase bg-white/20 w-fit px-2 py-1 rounded-lg">
-                   Launch AI Chat
+          {/* Strategic Consultation Chat */}
+          <div className="flex flex-col h-[600px] bg-slate-900 rounded-[1.5rem] border border-slate-800 shadow-2xl relative overflow-hidden">
+             <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-900/50 backdrop-blur-md sticky top-0 z-10">
+                <div className="flex items-center gap-3">
+                   <div className="w-8 h-8 rounded-lg bg-[var(--gc-purple)] flex items-center justify-center text-white">
+                      <MessageSquare size={16} />
+                   </div>
+                   <div>
+                      <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Mission Strategist</h4>
+                      <p className="text-[11px] font-bold text-white leading-none">Strategic Chat</p>
+                   </div>
                 </div>
+                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
              </div>
+
+             <div className="flex-1 overflow-y-auto p-5 space-y-4 scrollbar-hide">
+                {chatMessages.map((msg, idx) => (
+                  <div key={idx} className={cn(
+                    "max-w-[85%] rounded-2xl p-4 text-[11px] font-medium leading-relaxed",
+                    msg.role === 'user' 
+                      ? "ml-auto bg-[var(--gc-purple)] text-white rounded-tr-none shadow-lg" 
+                      : "bg-slate-800 text-slate-200 rounded-tl-none border border-slate-700"
+                  )}>
+                    {msg.content}
+
+                    {msg.refinements && (
+                      <div className="mt-4 p-3 bg-white/10 rounded-xl border border-white/10 space-y-2">
+                         <p className="text-[9px] font-black uppercase tracking-widest text-[var(--gc-orange)]">Apply Refinements?</p>
+                         <div className="text-[10px] space-y-1 opacity-80 italic">
+                            {msg.refinements.country && <p>• Market: {msg.refinements.country}</p>}
+                            {msg.refinements.niche && <p>• Niche: {msg.refinements.niche}</p>}
+                            {msg.refinements.range && <p>• Range: {msg.refinements.range}</p>}
+                         </div>
+                         <button 
+                           onClick={() => applyRefinements(msg.refinements)}
+                           className="w-full mt-2 py-2 bg-white text-slate-900 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-[var(--gc-orange)] hover:text-white transition-colors"
+                         >
+                            Apply Parameters
+                         </button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+                {isConsulting && (
+                  <div className="max-w-[85%] bg-slate-800 text-slate-200 rounded-2xl rounded-tl-none p-4 text-[11px] border border-slate-700">
+                     <div className="flex gap-1">
+                        <div className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" />
+                        <div className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:0.2s]" />
+                        <div className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:0.4s]" />
+                     </div>
+                  </div>
+                )}
+             </div>
+
+             <form onSubmit={handleConsult} className="p-4 bg-slate-900 border-t border-slate-800">
+                <div className="relative">
+                   <input 
+                     value={chatInput}
+                     onChange={e => setChatInput(e.target.value)}
+                     placeholder="Ask the Analyst..."
+                     className="w-full bg-slate-800 border border-slate-700 text-white rounded-xl py-3 pl-4 pr-12 text-[11px] focus:ring-2 focus:ring-[var(--gc-purple)] outline-none transition-all placeholder:text-slate-500"
+                   />
+                   <button 
+                     type="submit"
+                     disabled={isConsulting || !chatInput.trim()}
+                     className="absolute right-2 top-1.5 w-8 h-8 rounded-lg bg-[var(--gc-purple)] text-white flex items-center justify-center hover:bg-[var(--gc-orange)] transition-colors disabled:opacity-50"
+                   >
+                      <ArrowRight size={16} />
+                   </button>
+                </div>
+             </form>
           </div>
         </div>
 
@@ -431,32 +543,46 @@ export default function InfluencerDiscovery() {
                          </div>
                       </div>
 
-                      <div className="space-y-4">
-                         <div className="flex items-start gap-3">
-                            <div className="w-6 h-6 rounded-lg bg-[var(--gc-purple-soft)] text-[var(--gc-purple)] flex items-center justify-center flex-shrink-0 mt-0.5">
-                               <Sparkles size={12} />
+                      <div className="space-y-5">
+                         <div className="flex items-start gap-3 p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
+                            <div className="w-8 h-8 rounded-xl bg-[var(--gc-purple-soft)] text-[var(--gc-purple)] flex items-center justify-center flex-shrink-0">
+                               <Sparkles size={16} />
                             </div>
-                            <p className="text-xs font-medium text-slate-600 leading-relaxed italic">
-                               "{inf.relevanceReason}"
-                            </p>
+                            <div className="space-y-1">
+                               <p className="text-[10px] font-black uppercase tracking-widest text-[var(--gc-purple)]">Strategic Relevance</p>
+                               <p className="text-xs font-medium text-slate-600 leading-relaxed italic">
+                                  "{inf.relevanceReason}"
+                               </p>
+                            </div>
                          </div>
                          
-                         <div className="grid grid-cols-1 gap-3 pl-9">
-                            <div className="space-y-1">
-                               <p className="text-[9px] font-black uppercase tracking-widest text-[var(--gc-orange)] flex items-center gap-1">
-                                 <TrendingUp size={10} /> Recent Performance
-                               </p>
-                               <p className="text-[11px] text-slate-500 leading-normal">{inf.recentPerformance}</p>
+                         <div className="grid grid-cols-1 gap-5 pl-2">
+                            <div className="space-y-2">
+                               <div className="flex items-center justify-between">
+                                 <p className="text-[9px] font-black uppercase tracking-widest text-[var(--gc-orange)] flex items-center gap-1.5">
+                                   <TrendingUp size={12} /> Recent Performance
+                                 </p>
+                                 <span className="text-[10px] font-mono font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">{inf.growthMetric}</span>
+                               </div>
+                               <p className="text-[11px] text-slate-500 leading-relaxed pl-4 border-l-2 border-[var(--gc-orange-mid)]">{inf.recentPerformance}</p>
                             </div>
-                            <div className="space-y-1">
-                               <p className="text-[9px] font-black uppercase tracking-widest text-[var(--gc-purple)] flex items-center gap-1">
-                                 <Users size={10} /> Audience Alignment
+                            <div className="space-y-2">
+                               <p className="text-[9px] font-black uppercase tracking-widest text-[var(--gc-purple)] flex items-center gap-1.5">
+                                 <Users size={12} /> Audience Alignment
                                </p>
-                               <p className="text-[11px] text-slate-500 leading-normal">{inf.audienceAlignment}</p>
+                               <p className="text-[11px] text-slate-500 leading-relaxed pl-4 border-l-2 border-[var(--gc-purple-mid)]">{inf.audienceAlignment}</p>
                             </div>
                          </div>
 
-                         <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 tracking-widest pl-9">
+                         <div className="flex flex-wrap gap-2 pl-2">
+                            {inf.topTags.map((tag, i) => (
+                              <span key={i} className="px-2 py-1 bg-slate-50 text-[9px] font-bold text-slate-400 rounded-md border border-slate-100">
+                                #{tag}
+                              </span>
+                            ))}
+                         </div>
+
+                         <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 tracking-widest pl-2">
                             <MapPin size={10} />
                             {inf.location}
                          </div>

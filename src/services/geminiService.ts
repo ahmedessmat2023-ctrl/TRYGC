@@ -29,6 +29,8 @@ export interface SuggestedInfluencer {
   relevanceReason: string;
   recentPerformance: string;
   audienceAlignment: string;
+  growthMetric: string;
+  topTags: string[];
 }
 
 export async function discoverInfluencers(
@@ -60,7 +62,9 @@ export async function discoverInfluencers(
   6. location: Specific city and country.
   7. relevanceReason: A clear, summarized reason for relevance.
   8. recentPerformance: Granular analysis detailing their recent activity patterns (e.g., '12% follower growth in 30 days', 'Consistent high reel views').
-  9. audienceAlignment: Analysis of their audience demographics and how they align with the ${niche} niche and target audience expectations.`;
+  9. audienceAlignment: Analysis of their audience demographics and how they align with the ${niche} niche and target audience expectations.
+  10. growthMetric: A specific growth percentage or velocity indicator (e.g. '+15% MoM').
+  11. topTags: Array of 3 relevant hashtags they frequently use.`;
 
   try {
     const response = await ai.models.generateContent({
@@ -83,9 +87,11 @@ export async function discoverInfluencers(
               location: { type: Type.STRING },
               relevanceReason: { type: Type.STRING },
               recentPerformance: { type: Type.STRING },
-              audienceAlignment: { type: Type.STRING }
+              audienceAlignment: { type: Type.STRING },
+              growthMetric: { type: Type.STRING },
+              topTags: { type: Type.ARRAY, items: { type: Type.STRING } }
             },
-            required: ["handle", "platform", "followers", "engagement", "niche", "location", "relevanceReason", "recentPerformance", "audienceAlignment"]
+            required: ["handle", "platform", "followers", "engagement", "niche", "location", "relevanceReason", "recentPerformance", "audienceAlignment", "growthMetric", "topTags"]
           }
         }
       }
@@ -95,5 +101,67 @@ export async function discoverInfluencers(
   } catch (error) {
     console.error("Discovery Error:", error);
     throw error;
+  }
+}
+
+export interface StrategicConsultation {
+  message: string;
+  suggestedRefinements?: {
+    country?: string;
+    niche?: string;
+    range?: string;
+  };
+}
+
+export async function consultStrategicAI(
+  userMessage: string,
+  history: { role: string, content: string }[],
+  currentCriteria: any
+): Promise<StrategicConsultation> {
+  const ai = getAI();
+  
+  const systemInstruction = `You are a Strategic Influencer Consultant for TryGC. 
+  Your goal is to help users refine their discovery parameters to find the most effective creators for their campaigns.
+  You have access to the current search criteria: ${JSON.stringify(currentCriteria)}.
+  
+  If the user's request suggests a better way to target (e.g. "find more tech people in Dubai"), 
+  provide your advice in the 'message' field and also provide 'suggestedRefinements' if you think the criteria should change.
+  
+  Response format must be JSON.`;
+
+  const prompt = userMessage;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: [
+        ...history.map(h => ({ role: h.role === 'user' ? 'user' : 'model', parts: [{ text: h.content }] })),
+        { role: 'user', parts: [{ text: prompt }] }
+      ],
+      config: {
+        systemInstruction,
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            message: { type: Type.STRING },
+            suggestedRefinements: {
+              type: Type.OBJECT,
+              properties: {
+                country: { type: Type.STRING },
+                niche: { type: Type.STRING },
+                range: { type: Type.STRING }
+              }
+            }
+          },
+          required: ["message"]
+        }
+      }
+    });
+
+    return JSON.parse(response.text);
+  } catch (error) {
+    console.error("Strategic Consultation Error:", error);
+    return { message: "I encountered an error connecting to the strategic database. Please try again." };
   }
 }

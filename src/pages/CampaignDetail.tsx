@@ -357,45 +357,45 @@ export default function CampaignDetail() {
             </div>
 
             <div className="grid grid-cols-2 gap-8">
-               <div className="command-card p-10 bg-[var(--gc-purple)] text-white rounded-3xl shadow-[var(--shadow-xl)] relative overflow-hidden group">
-                  <Users className="absolute -bottom-6 -right-6 text-white/5 size-48 group-hover:scale-110 transition-transform duration-700" />
-                  <p className="text-[12px] font-black uppercase tracking-widest opacity-70 mb-4">Creator Sentiment</p>
+               <div className="command-card p-10 bg-white text-[var(--ink-900)] rounded-3xl shadow-[var(--shadow-xl)] relative overflow-hidden group border border-slate-200">
+                  <Users className="absolute -bottom-6 -right-6 text-slate-100 size-48 group-hover:scale-110 transition-transform duration-700" />
+                  <p className="text-[12px] font-black uppercase tracking-widest text-slate-400 mb-4">Creator Sentiment</p>
                   <h4 className="text-5xl font-display font-black tracking-tight mb-8">Very High</h4>
                   <div className="space-y-6 relative z-10">
-                     <p className="text-[13px] text-white/90 italic font-medium leading-relaxed border-l-2 border-white/30 pl-5 py-1">
+                     <p className="text-[13px] text-slate-600 italic font-medium leading-relaxed border-l-2 border-[var(--gc-purple)] pl-5 py-1">
                         "Unrivaled brand alignment with the current summer vibe tracker. Extractions show high organic ripple effect."
                      </p>
                      <div className="flex -space-x-2">
                         {[1,2,3,4].map(i => (
-                          <div key={i} className="w-10 h-10 rounded-full bg-white/10 border-2 border-[var(--gc-purple)] backdrop-blur-md shadow-sm" />
+                          <div key={i} className="w-10 h-10 rounded-full bg-slate-100 border-2 border-white shadow-sm" />
                         ))}
-                        <div className="w-10 h-10 rounded-full bg-white text-[var(--gc-purple)] flex items-center justify-center text-[12px] font-black border-2 border-[var(--gc-purple)] shadow-sm">
+                        <div className="w-10 h-10 rounded-full bg-[var(--gc-purple-soft)] text-[var(--gc-purple)] flex items-center justify-center text-[12px] font-black border-2 border-white shadow-sm">
                            +8
                         </div>
                      </div>
                   </div>
                </div>
-               <div className="command-card p-10 bg-[var(--ink-900)] text-white rounded-3xl relative overflow-hidden shadow-[var(--shadow-lg)]">
-                  <p className="text-[12px] font-black uppercase tracking-widest opacity-70 mb-4">Market Coverage</p>
+               <div className="command-card p-10 bg-white text-[var(--ink-900)] rounded-3xl relative overflow-hidden shadow-[var(--shadow-lg)] border border-slate-200">
+                  <p className="text-[12px] font-black uppercase tracking-widest text-slate-400 mb-4">Market Coverage</p>
                   <h4 className="text-5xl font-display font-black tracking-tight mb-8">Operational</h4>
                   <div className="space-y-8 relative z-10">
                      <div>
                        <div className="flex justify-between items-center text-[11px] font-black uppercase tracking-widest mb-3">
-                          <span className="text-[var(--ink-400)]">GCC Integration</span>
-                          <span className="text-white">82%</span>
+                          <span className="text-slate-400">GCC Integration</span>
+                          <span className="text-slate-900">82%</span>
                        </div>
-                       <div className="h-2 bg-[var(--ink-800)] rounded-full overflow-hidden shadow-inner">
+                       <div className="h-2 bg-slate-100 rounded-full overflow-hidden shadow-inner border border-slate-200">
                           <div className="h-full bg-[var(--gc-orange)] shadow-[0_0_10px_var(--gc-orange-soft)]" style={{ width: '82%' }} />
                        </div>
                      </div>
-                     <div className="flex items-center gap-5 text-[11px] font-black uppercase tracking-widest text-[var(--ink-500)]">
+                     <div className="flex items-center gap-5 text-[11px] font-black uppercase tracking-widest text-slate-400">
                         <div className="flex items-center gap-2">
                            <div className="w-2.5 h-2.5 rounded-full bg-[var(--success)] shadow-[0_0_8px_var(--success)]" /> Tier 1
                         </div>
                         <div className="flex items-center gap-2">
                            <div className="w-2.5 h-2.5 rounded-full bg-[var(--warning)] shadow-[0_0_8px_var(--warning)]" /> Tier 2
                         </div>
-                     </div>
+                      </div>
                   </div>
                </div>
             </div>

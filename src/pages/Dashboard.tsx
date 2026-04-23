@@ -42,54 +42,54 @@ export default function Dashboard() {
   return (
     <div className="max-w-[1240px] mx-auto space-y-10 pb-20 animate-in fade-in duration-700">
       {/* Executive Summary Section */}
-      <section className="relative overflow-hidden bg-[var(--ink-900)] rounded-[var(--radius-xl)] px-10 py-14 md:p-14 text-white shadow-[var(--shadow-lg)] border border-[var(--ink-700)]">
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[var(--gc-orange)] opacity-[0.08] blur-[120px] -mr-60 -mt-60" />
-        <div className="absolute top-1/2 left-0 w-80 h-80 bg-[var(--gc-purple)] opacity-[0.08] blur-[100px] -ml-20 rounded-full" />
+      <section className="relative overflow-hidden bg-white rounded-[var(--radius-xl)] px-10 py-14 md:p-14 text-[var(--ink-900)] shadow-[var(--shadow-lg)] border border-slate-200">
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[var(--gc-orange)] opacity-[0.05] blur-[120px] -mr-60 -mt-60" />
+        <div className="absolute top-1/2 left-0 w-80 h-80 bg-[var(--gc-purple)] opacity-[0.05] blur-[100px] -ml-20 rounded-full" />
         
         <div className="relative z-10 grid grid-cols-1 xl:grid-cols-12 gap-16 items-center">
           <div className="xl:col-span-7 space-y-8">
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--success)]/10 border border-[var(--success)]/20 text-[10.5px] font-mono font-bold uppercase tracking-[0.2em] text-[var(--success)]">
-                <Activity size={14} className="animate-pulse" /> Global Reconciliation Sync
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 border border-slate-200 text-[10.5px] font-mono font-bold uppercase tracking-[0.2em] text-slate-500">
+                <Activity size={14} className="animate-pulse text-[var(--gc-orange)]" /> Global Reconciliation Sync
               </div>
-              <div className="h-px w-16 bg-[var(--ink-500)]/30" />
-              <span className="text-[10.5px] font-mono font-bold uppercase tracking-widest text-[var(--ink-300)]">System Uptime: 99.98%</span>
+              <div className="h-px w-16 bg-slate-200" />
+              <span className="text-[10.5px] font-mono font-bold uppercase tracking-widest text-slate-400">System Uptime: 99.98%</span>
             </div>
 
             <div>
-              <h1 className="font-display font-black text-6xl md:text-7xl leading-[0.9] tracking-tighter mb-4 text-white">
+              <h1 className="font-display font-black text-6xl md:text-7xl leading-[0.9] tracking-tighter mb-4 text-[var(--ink-900)]">
                 Operational <br className="hidden md:block" /> 
-                <span className="text-transparent bg-clip-text bg-[var(--primary-grad)]">Heartbeat.</span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--ink-900)] via-[var(--ink-700)] to-[var(--gc-orange)]">Heartbeat.</span>
               </h1>
-              <p className="text-[var(--ink-300)] max-w-lg text-[1.05rem] leading-[1.75] font-sans">
-                Supervising <strong className="text-white font-bold">24 active campaigns</strong> across 4 regions. System velocity is optimized with <strong className="text-[var(--success)] font-bold">+14.2%</strong> efficiency gains this quarter.
+              <p className="text-slate-500 max-w-lg text-[1.05rem] leading-[1.75] font-sans">
+                Supervising <strong className="text-[var(--ink-900)] font-bold">24 active campaigns</strong> across 4 regions. System velocity is optimized with <strong className="text-[var(--gc-orange)] font-bold">+14.2%</strong> efficiency gains this quarter.
               </p>
             </div>
 
             <div className="flex flex-wrap gap-4 pt-2">
-               <button onClick={() => navigate('/setup')} className="px-8 py-4 bg-white text-[var(--ink-900)] rounded-full font-display font-black uppercase text-sm tracking-widest hover:scale-105 transition-transform flex items-center gap-3">
+               <button onClick={() => navigate('/setup')} className="px-8 py-4 bg-[var(--gc-purple)] text-white rounded-full font-display font-black uppercase text-sm tracking-widest hover:bg-[var(--gc-orange)] transition-all shadow-xl">
                   Deploy Campaign <ArrowUpRight size={18} />
                </button>
-               <button className="px-8 py-4 bg-[var(--ink-700)]/40 text-white border border-[var(--ink-500)]/30 rounded-full font-display font-black uppercase text-sm tracking-widest hover:bg-[var(--ink-700)] transition-colors">
+               <button className="px-8 py-4 bg-slate-100 text-slate-600 border border-slate-200 rounded-full font-display font-black uppercase text-sm tracking-widest hover:bg-slate-200 transition-colors">
                   System Audit
                </button>
             </div>
           </div>
 
           <div className="xl:col-span-5 grid grid-cols-2 gap-5 h-full">
-             <div className="bg-white/5 backdrop-blur-3xl border border-white/10 rounded-[var(--radius-lg)] p-8 flex flex-col justify-between group hover:border-[var(--gc-orange)]/30 transition-colors">
+             <div className="bg-slate-50 border border-slate-100 rounded-[var(--radius-lg)] p-8 flex flex-col justify-between group hover:border-[var(--gc-orange)]/30 transition-colors">
                 <div>
                    <Globe strokeWidth={1.5} size={28} className="text-[var(--gc-orange)] mb-4" />
-                   <p className="text-[10.5px] font-mono font-bold uppercase tracking-[0.2em] text-[var(--ink-300)] mt-2">Active Reach</p>
+                   <p className="text-[10.5px] font-mono font-bold uppercase tracking-[0.2em] text-slate-400 mt-2">Active Reach</p>
                 </div>
-                <p className="text-5xl font-display font-black text-white group-hover:scale-105 transition-transform origin-left tabular-nums mt-6">1.2<span className="text-3xl">M</span></p>
+                <p className="text-5xl font-display font-black text-slate-900 group-hover:scale-105 transition-transform origin-left tabular-nums mt-6">1.2<span className="text-3xl">M</span></p>
              </div>
-             <div className="bg-white/5 backdrop-blur-3xl border border-white/10 rounded-[var(--radius-lg)] p-8 flex flex-col justify-between group hover:border-[var(--gc-purple)]/30 transition-colors">
+             <div className="bg-slate-50 border border-slate-100 rounded-[var(--radius-lg)] p-8 flex flex-col justify-between group hover:border-[var(--gc-purple)]/30 transition-colors">
                 <div>
                    <Zap strokeWidth={1.5} size={28} className="text-[var(--gc-purple)] mb-4" />
-                   <p className="text-[10.5px] font-mono font-bold uppercase tracking-[0.2em] text-[var(--ink-300)] mt-2">System Load</p>
+                   <p className="text-[10.5px] font-mono font-bold uppercase tracking-[0.2em] text-slate-400 mt-2">System Load</p>
                 </div>
-                <p className="text-5xl font-display font-black text-white group-hover:scale-105 transition-transform origin-left tabular-nums mt-6">42<span className="text-3xl text-[var(--ink-300)]">%</span></p>
+                <p className="text-5xl font-display font-black text-slate-900 group-hover:scale-105 transition-transform origin-left tabular-nums mt-6">42<span className="text-3xl text-slate-400">%</span></p>
              </div>
              <div className="col-span-2 bg-gradient-to-r from-[var(--gc-orange)] to-[#FF8A40] rounded-[var(--radius-xl)] p-8 md:p-10 flex items-center justify-between shadow-[0_20px_40px_rgba(232,99,12,0.25)] relative overflow-hidden">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.2)_20%,transparent_20%),radial-gradient(circle_at_0%_0%,rgba(255,255,255,0.1)_15%,transparent_15%)] bg-[length:40px_40px] opacity-40 pointer-events-none" />
@@ -243,13 +243,13 @@ export default function Dashboard() {
 
         {/* Right: Operational Live Feed */}
         <div className="xl:col-span-4 space-y-8">
-           <div className="bg-[var(--gc-purple)] rounded-[var(--radius-xl)] p-10 text-white shadow-[var(--shadow-lg)] relative overflow-hidden group">
-              <div className="absolute top-0 right-0 p-8 text-white/5 group-hover:rotate-[15deg] transition-transform duration-700">
+           <div className="bg-white rounded-[var(--radius-xl)] p-10 text-[var(--ink-900)] shadow-[var(--shadow-lg)] border border-slate-200 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-8 text-slate-100 group-hover:rotate-[15deg] transition-transform duration-700">
                  <ShieldCheck size={140} strokeWidth={1} />
               </div>
-              <p className="text-[11px] font-mono font-bold uppercase tracking-widest text-[#DED5EB] mb-2">Confidence Score</p>
-              <h4 className="text-6xl font-display font-black mb-4 tracking-tighter">92.4<span className="text-3xl text-[#DED5EB]">%</span></h4>
-              <p className="text-[14.5px] text-[#DED5EB] leading-[1.65] font-sans">
+              <p className="text-[11px] font-mono font-bold uppercase tracking-widest text-slate-400 mb-2">Confidence Score</p>
+              <h4 className="text-6xl font-display font-black mb-4 tracking-tighter text-slate-900">92.4<span className="text-3xl text-slate-400">%</span></h4>
+              <p className="text-[14.5px] text-slate-500 leading-[1.65] font-sans relative z-10">
                  Security gates verified across all 18 operational stages. Zero leaks detected in current intake cycle.
               </p>
            </div>
