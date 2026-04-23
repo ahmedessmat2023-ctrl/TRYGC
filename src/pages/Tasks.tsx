@@ -192,9 +192,14 @@ export default function TasksCenter() {
                               {task.title}
                             </span>
                             {overdue && (
-                              <div className="relative flex h-3 w-3">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--danger)] opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-3 w-3 bg-[var(--danger)] shadow-sm shadow-[var(--danger)]/40"></span>
+                              <div className="flex items-center gap-2">
+                                <span className="px-2 py-0.5 bg-[var(--danger)] text-white text-[8px] font-black uppercase tracking-widest rounded transition-all animate-pulse shadow-sm shadow-[var(--danger)]/40">
+                                  Overdue
+                                </span>
+                                <div className="relative flex h-2.5 w-2.5">
+                                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--danger)] opacity-75"></span>
+                                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[var(--danger)] shadow-sm"></span>
+                                </div>
                               </div>
                             )}
                           </div>

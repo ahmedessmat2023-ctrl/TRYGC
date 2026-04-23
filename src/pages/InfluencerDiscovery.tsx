@@ -26,7 +26,8 @@ import {
   Smartphone,
   Download,
   Moon,
-  Sun
+  Sun,
+  Users
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../utils';
@@ -398,7 +399,7 @@ export default function InfluencerDiscovery() {
                          </div>
                       </div>
 
-                      <div className="space-y-3">
+                      <div className="space-y-4">
                          <div className="flex items-start gap-3">
                             <div className="w-6 h-6 rounded-lg bg-[var(--gc-purple-soft)] text-[var(--gc-purple)] flex items-center justify-center flex-shrink-0 mt-0.5">
                                <Sparkles size={12} />
@@ -407,7 +408,23 @@ export default function InfluencerDiscovery() {
                                "{inf.relevanceReason}"
                             </p>
                          </div>
-                         <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 tracking-widest">
+                         
+                         <div className="grid grid-cols-1 gap-3 pl-9">
+                            <div className="space-y-1">
+                               <p className="text-[9px] font-black uppercase tracking-widest text-[var(--gc-orange)] flex items-center gap-1">
+                                 <TrendingUp size={10} /> Recent Performance
+                               </p>
+                               <p className="text-[11px] text-slate-500 leading-normal">{inf.recentPerformance}</p>
+                            </div>
+                            <div className="space-y-1">
+                               <p className="text-[9px] font-black uppercase tracking-widest text-[var(--gc-purple)] flex items-center gap-1">
+                                 <Users size={10} /> Audience Alignment
+                               </p>
+                               <p className="text-[11px] text-slate-500 leading-normal">{inf.audienceAlignment}</p>
+                            </div>
+                         </div>
+
+                         <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 tracking-widest pl-9">
                             <MapPin size={10} />
                             {inf.location}
                          </div>

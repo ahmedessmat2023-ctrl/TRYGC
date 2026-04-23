@@ -58,6 +58,34 @@ const getPlatformUrl = (platform: string, handle: string) => {
   }
 };
 
+const PLATFORM_THEMES: Record<string, any> = {
+  instagram: {
+    primary: 'from-[#833ab4]',
+    secondary: 'bg-[#E1306C]',
+    accent: 'text-[#E1306C]'
+  },
+  tiktok: {
+    primary: 'from-[#69C9D0]',
+    secondary: 'bg-[#EE1D52]',
+    accent: 'text-[#69C9D0]'
+  },
+  youtube: {
+    primary: 'from-[#FF0000]',
+    secondary: 'bg-[#FF0000]',
+    accent: 'text-[#FF0000]'
+  },
+  snapchat: {
+    primary: 'from-[#FFFC00]',
+    secondary: 'bg-[#FFFC00]',
+    accent: 'text-yellow-400'
+  },
+  default: {
+    primary: 'from-[var(--gc-purple)]',
+    secondary: 'bg-[var(--gc-orange)]',
+    accent: 'text-[var(--gc-orange)]'
+  }
+};
+
 export default function InfluencerProfile() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -65,6 +93,11 @@ export default function InfluencerProfile() {
   const influencer = React.useMemo(() => {
     return dataService.getInfluencers().find(i => i.id === id);
   }, [id]);
+
+  const theme = React.useMemo(() => {
+    if (!influencer) return PLATFORM_THEMES.default;
+    return PLATFORM_THEMES[influencer.platform.toLowerCase()] || PLATFORM_THEMES.default;
+  }, [influencer]);
 
   if (!influencer) {
     return (
@@ -79,12 +112,12 @@ export default function InfluencerProfile() {
     <div className="max-w-7xl mx-auto space-y-10 pb-20 animate-in fade-in slide-in-from-bottom-6 duration-500">
       {/* Profiler Header */}
       <header className="relative p-12 bg-slate-900 rounded-[3rem] text-white overflow-hidden shadow-2xl border border-slate-800">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-[var(--gc-purple)] to-transparent opacity-10 blur-[100px] -mr-40 -mt-40" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-[var(--gc-orange)] opacity-10 blur-[100px] -ml-20 rounded-full" />
+        <div className={cn("absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br to-transparent opacity-20 blur-[120px] -mr-40 -mt-40 transition-all duration-1000", theme.primary)} />
+        <div className={cn("absolute bottom-0 left-0 w-80 h-80 opacity-10 blur-[100px] -ml-20 rounded-full transition-all duration-1000", theme.secondary)} />
         
         <div className="relative z-10 flex flex-col md:flex-row gap-12 items-center lg:items-end">
            <div className="relative group">
-              <div className="w-48 h-48 rounded-[3rem] bg-slate-800 border-4 border-slate-700 shadow-2xl overflow-hidden relative z-10">
+              <div className={cn("w-48 h-48 rounded-[3rem] bg-slate-800 border-4 border-slate-700 shadow-2xl overflow-hidden relative z-10 transition-all group-hover:border-opacity-50", influencer.platform.toLowerCase() === 'snapchat' ? 'group-hover:border-yellow-400' : 'group-hover:border-white')}>
                  <div className="w-full h-full bg-slate-700 flex items-center justify-center text-5xl font-display font-black text-white/20">
                     {influencer.username.substring(1, 3).toUpperCase()}
                  </div>
@@ -107,14 +140,14 @@ export default function InfluencerProfile() {
 
               <div className="flex flex-wrap justify-center md:justify-start items-center gap-6 text-slate-400 font-bold uppercase text-[10px] tracking-widest">
                  <div className="flex items-center gap-2">
-                    <MapPin size={14} className="text-[var(--gc-orange)]" /> {influencer.city || 'Regional Market'}{influencer.country ? `, ${influencer.country}` : ''}
+                    <MapPin size={14} className={theme.accent} /> {influencer.city || 'Regional Market'}{influencer.country ? `, ${influencer.country}` : ''}
                  </div>
                  <div className="flex items-center gap-2">
                     <a 
                       href={getPlatformUrl(influencer.platform, influencer.username)} 
                       target="_blank" 
                       rel="noreferrer"
-                      className="flex items-center gap-2 hover:text-[var(--gc-orange)] hover:underline transition-colors outline-none focus:ring-2 focus:ring-[var(--gc-orange-soft)] rounded px-1 -mx-1"
+                      className={cn("flex items-center gap-2 hover:underline transition-colors outline-none focus:ring-2 rounded px-1 -mx-1", theme.accent, "focus:ring-white/20")}
                       title={`View ${influencer.username} on ${influencer.platform}`}
                     >
                       {React.createElement(getPlatformIcon(influencer.platform), { size: 14 })}

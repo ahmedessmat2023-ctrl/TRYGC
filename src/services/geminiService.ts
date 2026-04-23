@@ -27,6 +27,8 @@ export interface SuggestedInfluencer {
   niche: string;
   location: string;
   relevanceReason: string;
+  recentPerformance: string;
+  audienceAlignment: string;
 }
 
 export async function discoverInfluencers(
@@ -56,7 +58,9 @@ export async function discoverInfluencers(
   4. engagement: Estimated engagement rate (e.g. 4.2%).
   5. niche: Their specific Content Pillar (e.g. Sustainable Fashion).
   6. location: Specific city and country.
-  7. relevanceReason: Highly granular 2-3 sentence analysis detailing their recent performance patterns, specific audience alignment within the ${niche} niche, and why their unique style strategically matches constraints. Use analytical phrasing (e.g., 'Recent metrics indicate a 12% velocity surge...').`;
+  7. relevanceReason: A clear, summarized reason for relevance.
+  8. recentPerformance: Granular analysis detailing their recent activity patterns (e.g., '12% follower growth in 30 days', 'Consistent high reel views').
+  9. audienceAlignment: Analysis of their audience demographics and how they align with the ${niche} niche and target audience expectations.`;
 
   try {
     const response = await ai.models.generateContent({
@@ -77,9 +81,11 @@ export async function discoverInfluencers(
               engagement: { type: Type.STRING },
               niche: { type: Type.STRING },
               location: { type: Type.STRING },
-              relevanceReason: { type: Type.STRING }
+              relevanceReason: { type: Type.STRING },
+              recentPerformance: { type: Type.STRING },
+              audienceAlignment: { type: Type.STRING }
             },
-            required: ["handle", "platform", "followers", "engagement", "niche", "location", "relevanceReason"]
+            required: ["handle", "platform", "followers", "engagement", "niche", "location", "relevanceReason", "recentPerformance", "audienceAlignment"]
           }
         }
       }

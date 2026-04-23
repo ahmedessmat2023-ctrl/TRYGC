@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'motion/react';
 import { 
   Users, 
   Search, 
@@ -29,11 +30,27 @@ export default function InfluencerList() {
   const [isBulkUpdating, setIsBulkUpdating] = useState(false);
   const [sortConfig, setSortConfig] = useState<{ key: keyof CampaignInfluencer, direction: 'asc' | 'desc' } | null>(null);
 
-  const filteredInfluencers = influencers.filter(inf => 
-    inf.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    inf.platform.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (inf.city || '').toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const [selectedNiche, setSelectedNiche] = useState<string>('all');
+  const [selectedRange, setSelectedRange] = useState<string>('all');
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  const niches = useMemo(() => {
+    const list = influencers.map(i => i.niche).filter(Boolean) as string[];
+    return ['all', ...Array.from(new Set(list))];
+  }, [influencers]);
+
+  const ranges = ['all', '10k-50k', '50k-100k', '100k-500k', '500k-1M'];
+
+  const filteredInfluencers = influencers.filter(inf => {
+    const matchesSearch = inf.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      inf.platform.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (inf.city || '').toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesNiche = selectedNiche === 'all' || inf.niche === selectedNiche;
+    const matchesRange = selectedRange === 'all' || inf.followerRange === selectedRange;
+
+    return matchesSearch && matchesNiche && matchesRange;
+  });
 
   const sortedInfluencers = useMemo(() => {
     let sortableItems = [...filteredInfluencers];
@@ -191,19 +208,70 @@ export default function InfluencerList() {
       )}
 
       <div className="command-card shadow-sm border border-[var(--border)] bg-white overflow-hidden">
-        <div className="p-6 border-b border-[var(--border)] flex justify-between items-center bg-[var(--bg)]/50">
-           <div className="relative w-[380px]">
-              <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--ink-400)] peer-focus:text-[var(--gc-purple)] transition-colors" />
-              <input 
-                className="peer w-full pl-12 pr-4 py-3.5 text-[13px] outline-none font-bold bg-white border border-[var(--border-strong)] rounded-full focus:border-[var(--gc-purple)] focus:ring-[4px] focus:ring-[var(--gc-purple-soft)] transition-all shadow-sm placeholder:text-[var(--ink-300)] text-[var(--ink-900)]" 
-                placeholder="Search by username, platform, city..." 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+        <div className="p-6 border-b border-[var(--border)] flex flex-col gap-6 bg-[var(--bg)]/50">
+           <div className="flex justify-between items-center">
+              <div className="relative w-[380px]">
+                 <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--ink-400)] peer-focus:text-[var(--gc-purple)] transition-colors" />
+                 <input 
+                   className="peer w-full pl-12 pr-4 py-3.5 text-[13px] outline-none font-bold bg-white border border-[var(--border-strong)] rounded-full focus:border-[var(--gc-purple)] focus:ring-[4px] focus:ring-[var(--gc-purple-soft)] transition-all shadow-sm placeholder:text-[var(--ink-300)] text-[var(--ink-900)]" 
+                   placeholder="Search by username, platform, city..." 
+                   value={searchQuery}
+                   onChange={(e) => setSearchQuery(e.target.value)}
+                 />
+              </div>
+              <button 
+                onClick={() => setIsFilterOpen(!isFilterOpen)}
+                className={cn(
+                  "flex items-center gap-2 px-6 py-3.5 border rounded-full text-[12px] font-display font-bold uppercase tracking-widest transition-all shadow-sm",
+                  isFilterOpen ? "bg-slate-900 text-white border-slate-900" : "bg-white text-[var(--ink-700)] border-[var(--border-strong)] hover:bg-[var(--bg)]"
+                )}
+              >
+                 <Filter strokeWidth={2.5} size={16} /> Global Filters
+              </button>
            </div>
-           <button className="flex items-center gap-2 px-6 py-3.5 border border-[var(--border-strong)] rounded-full text-[12px] font-display font-bold uppercase tracking-widest text-[var(--ink-700)] bg-white hover:bg-[var(--bg)] transition-all shadow-sm">
-              <Filter strokeWidth={2.5} size={16} /> Global Filters
-           </button>
+
+           {isFilterOpen && (
+             <motion.div 
+               initial={{ height: 0, opacity: 0 }}
+               animate={{ height: 'auto', opacity: 1 }}
+               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-4 pb-2"
+             >
+                <div className="space-y-2">
+                   <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Content Pillar (Niche)</label>
+                   <select 
+                     className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs font-bold bg-white focus:ring-2 focus:ring-[var(--gc-purple-soft)] outline-none transition-all cursor-pointer shadow-sm"
+                     value={selectedNiche}
+                     onChange={e => setSelectedNiche(e.target.value)}
+                   >
+                     {niches.map(n => <option key={n} value={n}>{n.toUpperCase()}</option>)}
+                   </select>
+                </div>
+
+                <div className="space-y-2">
+                   <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Follower Range</label>
+                   <select 
+                     className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs font-bold bg-white focus:ring-2 focus:ring-[var(--gc-purple-soft)] outline-none transition-all cursor-pointer shadow-sm"
+                     value={selectedRange}
+                     onChange={e => setSelectedRange(e.target.value)}
+                   >
+                     {ranges.map(r => <option key={r} value={r}>{r.toUpperCase()}</option>)}
+                   </select>
+                </div>
+
+                <div className="flex items-end">
+                   <button 
+                     onClick={() => {
+                       setSelectedNiche('all');
+                       setSelectedRange('all');
+                       setSearchQuery('');
+                     }}
+                     className="text-[10px] font-black uppercase tracking-widest text-[var(--gc-orange)] hover:underline underline-offset-4"
+                   >
+                      Reset All Filters
+                   </button>
+                </div>
+             </motion.div>
+           )}
         </div>
 
         {viewMode === 'list' ? (

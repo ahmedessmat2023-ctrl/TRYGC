@@ -12,6 +12,9 @@ import {
   Plus, 
   Activity,
   AlertCircle,
+  AlertTriangle,
+  Flame,
+  ShieldCheck,
   CheckCircle2,
   Clock,
   Eye,
@@ -253,32 +256,29 @@ export default function CampaignList() {
                            />
                         </td>
                         <td className="px-6 py-4 border-b border-[var(--border)] relative group/health">
-                           <label className="flex items-center gap-2 font-display font-black uppercase text-[11px] tracking-widest cursor-pointer w-fit px-2 py-1 rounded hover:bg-[var(--bg)] transition-colors">
-                              <div className="relative flex h-3 w-3">
-                                <span className={cn(
-                                  "animate-ping absolute inline-flex h-full w-full rounded-full opacity-75",
-                                  campaign.recordHealth === 'Healthy' ? "bg-emerald-400" : 
-                                  campaign.recordHealth === 'At Risk' ? "bg-amber-400" : "bg-red-400"
-                                )}></span>
-                                <span className={cn(
-                                  "relative inline-flex rounded-full h-3 w-3",
-                                  campaign.recordHealth === 'Healthy' ? "bg-emerald-500" : 
-                                  campaign.recordHealth === 'At Risk' ? "bg-amber-500" : "bg-red-500"
-                                )}></span>
-                              </div>
-                              
-                              <select 
-                                value={campaign.recordHealth}
-                                onChange={(e) => handleUpdateHealth(campaign.id, e.target.value as any)}
-                                className={cn(
-                                  "bg-transparent outline-none appearance-none font-mono font-bold tracking-widest uppercase cursor-pointer hover:underline underline-offset-4 decoration-2",
-                                  campaign.recordHealth === 'Healthy' ? "text-[var(--success)] decoration-emerald-200" : 
-                                  campaign.recordHealth === 'At Risk' ? "text-amber-600 decoration-amber-200" : "text-[var(--danger)] decoration-red-200"
-                                )}
-                              >
-                                {['Healthy', 'At Risk', 'Critical'].map(h => <option key={h} value={h}>{h}</option>)}
-                              </select>
-                           </label>
+                           <div className="flex items-center w-full">
+                             <label className={cn(
+                               "flex items-center gap-2 px-3 py-1.5 rounded-full border text-[10px] font-black uppercase tracking-widest cursor-pointer transition-all hover:scale-105 shadow-sm relative overflow-hidden",
+                               campaign.recordHealth === 'Healthy' ? "bg-emerald-50 text-emerald-600 border-emerald-200" : 
+                               campaign.recordHealth === 'At Risk' ? "bg-amber-50 text-amber-600 border-amber-200" : 
+                               "bg-red-50 text-red-600 border-red-200"
+                             )}>
+                                {campaign.recordHealth === 'Healthy' && <ShieldCheck size={12} strokeWidth={2.5} />}
+                                {campaign.recordHealth === 'At Risk' && <AlertTriangle size={12} strokeWidth={2.5} />}
+                                {campaign.recordHealth === 'Critical' && <Flame size={12} strokeWidth={2.5} />}
+                                
+                                {campaign.recordHealth}
+
+                                <select 
+                                  value={campaign.recordHealth}
+                                  onChange={(e) => handleUpdateHealth(campaign.id, e.target.value as any)}
+                                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                  title="Update Mission Health"
+                                >
+                                  {['Healthy', 'At Risk', 'Critical'].map(h => <option key={h} value={h}>{h}</option>)}
+                                </select>
+                             </label>
+                           </div>
                         </td>
                         <td className="px-6 py-4 border-b border-[var(--border)] text-right">
                            <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-all">
