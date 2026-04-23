@@ -13,6 +13,7 @@ import BlockersWorkspace from './pages/Blockers';
 import QAReviewWorkspace from './pages/QAReview';
 import CampaignClosure from './pages/CampaignClosure';
 import InfluencerDiscovery from './pages/InfluencerDiscovery';
+import Chat from './pages/Chat';
 import OperationalAnalytics from './pages/Analytics';
 import AssetRegistry from './pages/AssetRegistry';
 import SettingsWorkspace from './pages/Settings';
@@ -66,6 +67,7 @@ export default function App() {
               <Route path="/influencers" element={<InfluencerList />} />
               <Route path="/influencer/:id" element={<InfluencerProfile />} />
               <Route path="/discovery" element={<InfluencerDiscovery />} />
+              <Route path="/chat" element={<Chat />} />
               <Route path="/invitations" element={<Invitations />} />
               <Route path="/scheduling" element={<Scheduling />} />
               <Route path="/coverage" element={<PostingCoverageDashboard />} />

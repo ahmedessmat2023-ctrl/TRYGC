@@ -24,6 +24,7 @@ import {
   Search,
   Bell,
   Sparkles,
+  MessageSquare,
   FileCheck as FileCheckIcon
 } from 'lucide-react';
 import { cn } from '../utils';
@@ -36,6 +37,7 @@ const menuGroups = [
       { icon: PlusCircle, label: 'Intake Stage', path: '/intake' },
       { icon: Settings2, label: 'Campaign Setup', path: '/setup' },
       { icon: Sparkles, label: 'AI Discovery', path: '/discovery' },
+      { icon: MessageSquare, label: 'AI Assistant', path: '/chat' },
       { icon: Mail, label: 'Invitations', path: '/invitations' },
     ]
   },

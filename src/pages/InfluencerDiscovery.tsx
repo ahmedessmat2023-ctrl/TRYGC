@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Search, 
   Sparkles, 
@@ -27,7 +28,8 @@ import {
   Download,
   Moon,
   Sun,
-  Users
+  Users,
+  MessageSquare
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../utils';
@@ -40,10 +42,19 @@ const PLATFORM_ICONS: Record<string, any> = {
   Snapchat: Smartphone
 };
 
+const PLATFORM_URLS: Record<string, string> = {
+  Instagram: 'https://www.instagram.com/',
+  TikTok: 'https://www.tiktok.com/@',
+  YouTube: 'https://www.youtube.com/@',
+  Snapchat: 'https://www.snapchat.com/add/'
+};
+
 export default function InfluencerDiscovery() {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<SuggestedInfluencer[]>([]);
   const [statusMessage, setStatusMessage] = useState('Initializing search relays...');
+  const [addedIds, setAddedIds] = useState<Set<number>>(new Set());
   const [criteria, setCriteria] = useState({
     campaignContext: 'none',
     country: 'Saudi Arabia',
@@ -51,6 +62,17 @@ export default function InfluencerDiscovery() {
     range: '100k-500k',
     count: 20
   });
+
+  const handleAddToMission = (idx: number) => {
+    setAddedIds(prev => new Set([...Array.from(prev), idx]));
+    // In a real app we would call a service to save this
+  };
+
+  const getPlatformUrl = (platform: string, handle: string) => {
+    const base = PLATFORM_URLS[platform] || 'https://google.com/search?q=';
+    const cleanHandle = handle.startsWith('@') ? handle.substring(1) : handle;
+    return `${base}${cleanHandle}`;
+  };
 
   const handleExport = () => {
     if (results.length === 0) {
@@ -276,20 +298,20 @@ export default function InfluencerDiscovery() {
           </motion.form>
 
           {/* Quick Insights Card */}
-          <div className="command-card p-6 bg-[var(--gc-purple)] text-white relative overflow-hidden rounded-[1.5rem] border-none group">
-             <TrendingUp size={80} className="absolute -bottom-4 -right-4 opacity-10 group-hover:scale-110 transition-transform" />
+          <div className="command-card p-6 bg-[var(--gc-purple)] text-white relative overflow-hidden rounded-[1.5rem] border-none group cursor-pointer" onClick={() => navigate('/chat')}>
+             <MessageSquare size={80} className="absolute -bottom-4 -right-4 opacity-10 group-hover:scale-110 transition-transform" />
              <div className="relative z-10">
-                <h4 className="text-[10px] font-black uppercase tracking-widest opacity-80 mb-4">Market Trend</h4>
-                <p className="text-lg font-bold tracking-tight leading-tight mb-2">Sustainable Fashion Jeddah is spiking by +14.2%</p>
+                <h4 className="text-[10px] font-black uppercase tracking-widest opacity-80 mb-4">Strategic Console</h4>
+                <p className="text-lg font-bold tracking-tight leading-tight mb-2">Need more precision? Converse with the Mission Strategist.</p>
                 <div className="flex items-center gap-2 text-[10px] font-black uppercase bg-white/20 w-fit px-2 py-1 rounded-lg">
-                   Live Data • source: G-Search
+                   Launch AI Chat
                 </div>
              </div>
           </div>
         </div>
 
         {/* Results Workspace */}
-        <div className="lg:col-span-9">
+        <div className="lg:col-span-9 space-y-8">
           <AnimatePresence mode="wait">
             {loading ? (
               <motion.div 
@@ -321,25 +343,48 @@ export default function InfluencerDiscovery() {
                  <p className="text-slate-400 text-sm max-w-sm mt-4 font-medium italic">
                     Synthesizing real-time creator data to match your <span className="text-[var(--gc-orange)] font-black">"{criteria.niche}"</span> constraints.
                  </p>
-
-                 <div className="mt-12 grid grid-cols-3 gap-8 opacity-20">
-                    {[1,2,3].map(i => (
-                      <div key={i} className="flex flex-col items-center gap-2">
-                         <div className="w-12 h-2 bg-slate-200 rounded-full" />
-                         <div className="w-20 h-2 bg-slate-100 rounded-full" />
-                      </div>
-                    ))}
-                 </div>
               </motion.div>
             ) : results.length > 0 ? (
               <motion.div 
                 key="results"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                className="space-y-8"
               >
-                {results.map((inf, idx) => (
-                  <motion.div 
+                {/* Tactical Stats Panel */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                   <div className="command-card p-6 bg-slate-900 text-white flex flex-col gap-1">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Identity Extraction</span>
+                      <span className="text-3xl font-mono font-black">{results.length}</span>
+                      <div className="flex items-center gap-1.5 mt-2">
+                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                         <span className="text-[9px] font-bold uppercase tracking-widest text-emerald-500">Verified Signals</span>
+                      </div>
+                   </div>
+                   <div className="command-card p-6 bg-white border-2 border-slate-50 flex flex-col gap-1">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Avg Interactions</span>
+                      <span className="text-3xl font-mono font-black text-[var(--gc-purple)]">4.8%</span>
+                      <TrendingUp size={14} className="text-emerald-500 mt-2" />
+                   </div>
+                   <div className="command-card p-6 bg-white border-2 border-slate-50 flex flex-col gap-1">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Cumulative Reach</span>
+                      <span className="text-3xl font-mono font-black text-[var(--gc-orange)]">2.4M</span>
+                      <div className="w-full h-1 bg-slate-100 rounded-full mt-3">
+                         <div className="w-[65%] h-full bg-[var(--gc-orange)] rounded-full" />
+                      </div>
+                   </div>
+                   <div className="command-card p-6 bg-[var(--gc-purple-soft)] border-none flex flex-col gap-1">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-[var(--gc-purple)]">Grounding Precision</span>
+                      <span className="text-3xl font-mono font-black text-[var(--gc-purple)]">94.2%</span>
+                      <div className="flex items-center gap-1 text-[9px] font-black text-[var(--gc-purple)] underline mt-2">
+                         VIEW AUDIT TRAIL
+                      </div>
+                   </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {results.map((inf, idx) => (
+                    <motion.div 
                     key={idx} 
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -348,7 +393,12 @@ export default function InfluencerDiscovery() {
                   >
                     <div className="p-8 space-y-6">
                       <div className="flex justify-between items-start">
-                        <div className="flex items-center gap-4">
+                        <a 
+                          href={getPlatformUrl(inf.platform, inf.handle)} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-4 hover:opacity-80 transition-opacity"
+                        >
                            <div className="w-14 h-14 rounded-2xl bg-slate-900 text-white flex items-center justify-center font-display font-black text-xl shadow-lg group-hover:rotate-6 transition-transform">
                               {inf.handle.substring(1, 2).toUpperCase()}
                            </div>
@@ -364,7 +414,7 @@ export default function InfluencerDiscovery() {
                                  <span className="text-[10px] font-black uppercase tracking-widest text-[var(--gc-purple)]">{inf.niche}</span>
                               </div>
                            </div>
-                        </div>
+                        </a>
                         <div className="p-2 bg-emerald-50 rounded-lg text-emerald-600">
                            <TrendingUp size={16} />
                         </div>
@@ -412,15 +462,26 @@ export default function InfluencerDiscovery() {
                          </div>
                       </div>
 
-                      <button className="w-full py-4 text-white text-[11px] font-black uppercase tracking-widest rounded-xl bg-slate-900 border-2 border-slate-900 hover:bg-[var(--gc-purple)] hover:border-[var(--gc-purple)] hover:shadow-lg hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3 overflow-hidden group/btn relative">
+                      <button 
+                        onClick={() => handleAddToMission(idx)}
+                        disabled={addedIds.has(idx)}
+                        className={cn(
+                          "w-full py-4 text-white text-[11px] font-black uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-3 overflow-hidden group/btn relative",
+                          addedIds.has(idx) 
+                            ? "bg-emerald-500 border-2 border-emerald-500" 
+                            : "bg-slate-900 border-2 border-slate-900 hover:bg-[var(--gc-purple)] hover:border-[var(--gc-purple)] hover:shadow-lg hover:-translate-y-0.5 shadow-[0_10px_30px_rgba(0,0,0,0.1)]"
+                        )}
+                      >
                         <span className="relative z-10 flex items-center gap-2">
-                           <UserPlus size={16} /> Add to Mission Structure
+                           {addedIds.has(idx) ? <ShieldCheck size={16} /> : <UserPlus size={16} />}
+                           {addedIds.has(idx) ? 'Successfully Aligned' : 'Add to Mission Structure'}
                         </span>
-                        <div className="absolute inset-0 bg-gradient-to-r from-[var(--gc-purple)] to-[var(--gc-orange)] opacity-0 group-hover/btn:opacity-10 transition-opacity" />
+                        {!addedIds.has(idx) && <div className="absolute inset-0 bg-gradient-to-r from-[var(--gc-purple)] to-[var(--gc-orange)] opacity-0 group-hover/btn:opacity-10 transition-opacity" />}
                       </button>
                     </div>
                   </motion.div>
                 ))}
+                </div>
               </motion.div>
             ) : (
               <motion.div 
