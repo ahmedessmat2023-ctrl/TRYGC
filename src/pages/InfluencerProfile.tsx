@@ -62,27 +62,37 @@ const PLATFORM_THEMES: Record<string, any> = {
   instagram: {
     primary: 'from-[#833ab4]',
     secondary: 'bg-[#E1306C]',
-    accent: 'text-[#E1306C]'
+    accent: 'text-[#E1306C]',
+    bg: 'bg-[#E1306C]/5',
+    icon: Instagram
   },
   tiktok: {
     primary: 'from-[#69C9D0]',
-    secondary: 'bg-[#EE1D52]',
-    accent: 'text-[#69C9D0]'
+    secondary: 'bg-[#000000]',
+    accent: 'text-[#69C9D0]',
+    bg: 'bg-black',
+    icon: Video
   },
   youtube: {
     primary: 'from-[#FF0000]',
     secondary: 'bg-[#FF0000]',
-    accent: 'text-[#FF0000]'
+    accent: 'text-[#FF0000]',
+    bg: 'bg-[#FF0000]/5',
+    icon: Youtube
   },
   snapchat: {
     primary: 'from-[#FFFC00]',
     secondary: 'bg-[#FFFC00]',
-    accent: 'text-yellow-400'
+    accent: 'text-[#FFFC00]',
+    bg: 'bg-[#FFFC00]/10',
+    icon: Smartphone
   },
   default: {
     primary: 'from-[var(--gc-purple)]',
     secondary: 'bg-[var(--gc-orange)]',
-    accent: 'text-[var(--gc-orange)]'
+    accent: 'text-[var(--gc-orange)]',
+    bg: 'bg-slate-900',
+    icon: Globe
   }
 };
 
@@ -112,10 +122,15 @@ export default function InfluencerProfile() {
   return (
     <div className="max-w-7xl mx-auto space-y-10 pb-20 animate-in fade-in slide-in-from-bottom-6 duration-500">
       {/* Profiler Header */}
-      <header className="relative p-12 bg-slate-900 rounded-[3rem] text-white overflow-hidden shadow-2xl border border-slate-800">
-        <div className={cn("absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br to-transparent opacity-20 blur-[120px] -mr-40 -mt-40 transition-all duration-1000", theme.primary)} />
-        <div className={cn("absolute bottom-0 left-0 w-80 h-80 opacity-10 blur-[100px] -ml-20 rounded-full transition-all duration-1000", theme.secondary)} />
+      <header className={cn("relative p-12 rounded-[3.5rem] text-white overflow-hidden shadow-2xl border transition-colors duration-700", theme.bg, influencer.platform.toLowerCase() === 'tiktok' ? 'border-slate-800' : 'border-slate-800/50')}>
+        <div className={cn("absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br to-transparent opacity-30 blur-[130px] -mr-40 -mt-40 transition-all duration-1000", theme.primary)} />
+        <div className={cn("absolute bottom-0 left-0 w-96 h-96 opacity-15 blur-[110px] -ml-20 rounded-full transition-all duration-1000", theme.secondary)} />
         
+        {/* Platform Watermark */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none transition-all duration-700">
+           {React.createElement(theme.icon, { size: 400, strokeWidth: 0.5 })}
+        </div>
+
         <div className="relative z-10 flex flex-col md:flex-row gap-12 items-center lg:items-end">
            <div className="relative group">
               <div className={cn("w-48 h-48 rounded-[3rem] bg-slate-800 border-4 border-slate-700 shadow-2xl overflow-hidden relative z-10 transition-all group-hover:border-opacity-50", influencer.platform.toLowerCase() === 'snapchat' ? 'group-hover:border-yellow-400' : 'group-hover:border-white')}>
@@ -143,16 +158,38 @@ export default function InfluencerProfile() {
                  <div className="flex items-center gap-2">
                     <MapPin size={14} className={theme.accent} /> {influencer.city || 'Regional Market'}{influencer.country ? `, ${influencer.country}` : ''}
                  </div>
-                 <div className="flex items-center gap-2">
+                 <div className="flex items-center gap-4 border-l border-white/10 pl-6 ml-2">
+                    <div className="flex items-center gap-3">
+                       {['Instagram', 'TikTok', 'YouTube', 'Snapchat'].map(plt => {
+                         const IconComp = getPlatformIcon(plt);
+                         return (
+                           <a 
+                             key={plt}
+                             href={getPlatformUrl(plt, influencer.username)}
+                             target="_blank"
+                             rel="noreferrer"
+                             className={cn(
+                               "w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:scale-110",
+                               plt.toLowerCase() === influencer.platform.toLowerCase() 
+                                 ? "bg-white text-slate-900 shadow-lg" 
+                                 : "bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white border border-white/10"
+                             )}
+                             title={`View on ${plt}`}
+                           >
+                              <IconComp size={16} />
+                           </a>
+                         );
+                       })}
+                    </div>
+                    <div className="h-4 w-px bg-white/10" />
                     <a 
                       href={getPlatformUrl(influencer.platform, influencer.username)} 
                       target="_blank" 
                       rel="noreferrer"
-                      className={cn("flex items-center gap-2 hover:underline transition-colors outline-none focus:ring-2 rounded px-1 -mx-1", theme.accent, "focus:ring-white/20")}
+                      className={cn("flex items-center gap-2 hover:underline transition-colors outline-none focus:ring-2 rounded px-1 -mx-1 font-bold", theme.accent, "focus:ring-white/20")}
                       title={`View ${influencer.username} on ${influencer.platform}`}
                     >
-                      {React.createElement(getPlatformIcon(influencer.platform), { size: 14 })}
-                      {influencer.platform} Operational
+                      {influencer.platform} Verified
                       <ExternalLink size={10} className="opacity-50" />
                     </a>
                  </div>
