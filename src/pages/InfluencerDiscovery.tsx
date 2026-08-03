@@ -226,20 +226,61 @@ export default function InfluencerDiscovery() {
       alert("No data to export. Please run a discovery search first.");
       return;
     }
-    const headers = ['Handle', 'Platform', 'Niche', 'Followers', 'Engagement', 'Location', 'Relevance'];
-    const csvRows = [headers.join(',')];
+
+    const escapeCsv = (val: any) => {
+      if (val === undefined || val === null) return '""';
+      const str = String(val).replace(/"/g, '""');
+      return `"${str}"`;
+    };
+
+    const headers = [
+      'Handle',
+      'Primary Platform',
+      'Niche / Category',
+      'Followers',
+      'Engagement Rate',
+      'Avg Video Views',
+      'Total Content Views',
+      'MoM Growth Rate',
+      'Business Email',
+      'Phone / WhatsApp',
+      'Agency / Management',
+      'Estimated Rate (Reel)',
+      'Location / Country',
+      'Top Hashtags',
+      'Social Profile Links',
+      'Relevance Reason',
+      'Recent Performance',
+      'Audience Alignment'
+    ];
+
+    const csvRows = [headers.map(escapeCsv).join(',')];
     
     for (const r of results) {
+      const socialLinks = (r.socialProfiles || []).map(p => `${p.platform}: ${p.url || p.handle}`).join(' | ');
+      const tags = (r.topTags || []).join(', ');
+
       const values = [
         r.handle,
         r.platform,
         r.niche,
         r.followers,
         r.engagement,
-        `"${r.location.replace(/"/g, '""')}"`,
-        `"${r.relevanceReason.replace(/"/g, '""')}"`
+        r.avgViews || '',
+        r.totalViews || '',
+        r.growthMetric || '',
+        r.contactEmail || '',
+        r.phoneNumber || '',
+        r.agencyOrMgmt || '',
+        r.estimatedRateReel || '',
+        r.location,
+        tags,
+        socialLinks,
+        r.relevanceReason,
+        r.recentPerformance || '',
+        r.audienceAlignment || ''
       ];
-      csvRows.push(values.join(','));
+      csvRows.push(values.map(escapeCsv).join(','));
     }
     
     const csvString = csvRows.join('\n');
@@ -247,7 +288,7 @@ export default function InfluencerDiscovery() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `discovery_export_${new Date().getTime()}.csv`);
+    link.setAttribute('download', `trygc_creator_discovery_full_export_${new Date().getTime()}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

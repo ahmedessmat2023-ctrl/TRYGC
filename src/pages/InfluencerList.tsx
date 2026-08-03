@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   Users, 
   Search, 
@@ -15,11 +15,78 @@ import {
   X,
   ArrowUpDown,
   ArrowUp,
-  ArrowDown
+  ArrowDown,
+  ArrowRight,
+  Layers,
+  Sparkles,
+  Check,
+  ChevronDown,
+  Download,
+  AlertCircle
 } from 'lucide-react';
 import { cn } from '../utils';
 import { dataService } from '../services/dataService';
 import { CampaignInfluencer } from '../types';
+
+export interface PhaseConfig {
+  key: CampaignInfluencer['status'];
+  label: string;
+  phaseNumber: number;
+  badgeColor: string;
+  hoverBg: string;
+  description: string;
+}
+
+const CAMPAIGN_PHASES: PhaseConfig[] = [
+  { 
+    key: 'Pending', 
+    label: 'Pending / Shortlist', 
+    phaseNumber: 1, 
+    badgeColor: 'bg-amber-500/20 text-amber-300 border-amber-500/30', 
+    hoverBg: 'hover:bg-amber-500/30',
+    description: 'Initial creator discovery & internal shortlist' 
+  },
+  { 
+    key: 'Invited', 
+    label: 'Outreach / Wave Sent', 
+    phaseNumber: 2, 
+    badgeColor: 'bg-sky-500/20 text-sky-300 border-sky-500/30', 
+    hoverBg: 'hover:bg-sky-500/30',
+    description: 'Campaign brief & invitation dispatched' 
+  },
+  { 
+    key: 'Confirmed', 
+    label: 'Roster Confirmed', 
+    phaseNumber: 3, 
+    badgeColor: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30', 
+    hoverBg: 'hover:bg-emerald-500/30',
+    description: 'Terms accepted & roster slot locked' 
+  },
+  { 
+    key: 'Scheduled', 
+    label: 'Visit / Delivery Scheduled', 
+    phaseNumber: 4, 
+    badgeColor: 'bg-purple-500/20 text-purple-300 border-purple-500/30', 
+    hoverBg: 'hover:bg-purple-500/30',
+    description: 'Store visit or product delivery date booked' 
+  },
+  { 
+    key: 'Completed', 
+    label: 'Coverage Live & QA', 
+    phaseNumber: 5, 
+    badgeColor: 'bg-teal-500/20 text-teal-300 border-teal-500/30', 
+    hoverBg: 'hover:bg-teal-500/30',
+    description: 'Content posted, link archived & QA approved' 
+  },
+  { 
+    key: 'Dropped', 
+    label: 'Dropped / Archived', 
+    phaseNumber: 6, 
+    badgeColor: 'bg-rose-500/20 text-rose-300 border-rose-500/30', 
+    hoverBg: 'hover:bg-rose-500/30',
+    description: 'Declined or removed from campaign execution' 
+  },
+];
 
 export default function InfluencerList() {
   const navigate = useNavigate();
@@ -29,6 +96,10 @@ export default function InfluencerList() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isBulkUpdating, setIsBulkUpdating] = useState(false);
   const [sortConfig, setSortConfig] = useState<{ key: keyof CampaignInfluencer, direction: 'asc' | 'desc' } | null>(null);
+  
+  // Bulk Action Toolbar State
+  const [targetPhase, setTargetPhase] = useState<CampaignInfluencer['status']>('Confirmed');
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const [selectedNiche, setSelectedNiche] = useState<string>('all');
   const [selectedRange, setSelectedRange] = useState<string>('all');
@@ -40,6 +111,11 @@ export default function InfluencerList() {
   }, [influencers]);
 
   const ranges = ['all', '10k-50k', '50k-100k', '100k-500k', '500k-1M'];
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 4000);
+  };
 
   const filteredInfluencers = influencers.filter(inf => {
     const matchesSearch = inf.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -82,6 +158,7 @@ export default function InfluencerList() {
   const handleUpdateStatus = (id: string, status: CampaignInfluencer['status']) => {
     const updated = dataService.updateInfluencer(id, { status });
     setInfluencers(updated);
+    showToast(`Updated creator phase to ${status}`);
   };
 
   const handleUpdateCity = (id: string, city: string) => {
@@ -102,13 +179,48 @@ export default function InfluencerList() {
   };
 
   const handleBulkStatusChange = (status: CampaignInfluencer['status']) => {
+    if (selectedIds.length === 0) return;
     setIsBulkUpdating(true);
+    const count = selectedIds.length;
+    
     setTimeout(() => {
       const updated = dataService.bulkUpdateInfluencerStatus(selectedIds, status);
       setInfluencers(updated);
       setSelectedIds([]);
       setIsBulkUpdating(false);
-    }, 800);
+      showToast(`Successfully moved ${count} creator(s) to "${status}" campaign phase.`);
+    }, 600);
+  };
+
+  const handleExportSelected = () => {
+    const selectedList = influencers.filter(i => selectedIds.includes(i.id));
+    if (selectedList.length === 0) return;
+
+    const headers = ['ID', 'Username', 'Platform', 'Campaign Phase', 'City', 'Niche', 'Follower Range'];
+    const rows = [headers.map(h => `"${h}"`).join(',')];
+    
+    for (const item of selectedList) {
+      rows.push([
+        `"${item.id}"`,
+        `"${item.username}"`,
+        `"${item.platform}"`,
+        `"${item.status}"`,
+        `"${item.city || 'Riyadh'}"`,
+        `"${item.niche || ''}"`,
+        `"${item.followerRange || ''}"`
+      ].join(','));
+    }
+
+    const csvContent = rows.join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `trygc_campaign_roster_phase_export_${Date.now()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast(`Exported ${selectedList.length} selected creator(s) to CSV.`);
   };
 
   const SortableHeader = ({ label, sortKey }: { label: string, sortKey: keyof CampaignInfluencer }) => {
@@ -132,7 +244,22 @@ export default function InfluencerList() {
   };
 
   return (
-    <div className="max-w-[1240px] mx-auto space-y-8 animate-in fade-in duration-500 relative pb-24">
+    <div className="max-w-[1240px] mx-auto space-y-8 animate-in fade-in duration-500 relative pb-32">
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {toastMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            className="fixed top-20 right-8 z-50 bg-slate-900 text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-slate-700 flex items-center gap-3 text-xs font-bold"
+          >
+            <CheckCircle2 size={18} className="text-emerald-400 shrink-0" />
+            <span>{toastMessage}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="flex justify-between items-end mb-10">
         <div>
           <div className="section-kicker">Roster Integrity</div>
@@ -163,49 +290,128 @@ export default function InfluencerList() {
         </div>
       </div>
 
-      {/* Floating Bulk Action Bar */}
-      {selectedIds.length > 0 && (
-        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 bg-[var(--ink-900)] text-white px-8 py-5 rounded-full shadow-[var(--shadow-xl)] flex items-center gap-6 animate-in slide-in-from-bottom-8 duration-300 border border-[var(--ink-700)]">
-           <div className="flex items-center gap-4 pr-6 border-r border-[var(--ink-700)]">
-              <div className="w-8 h-8 rounded-full bg-[var(--gc-purple)] flex items-center justify-center font-bold text-[14px]">
-                 {selectedIds.length}
-              </div>
-              <p className="text-[13px] font-bold tracking-tight text-white uppercase">Selected</p>
-           </div>
-           
-           <div className="flex items-center gap-2">
-              <p className="text-[11px] font-mono font-bold uppercase tracking-widest text-[var(--ink-300)] mr-3">Bulk Status Update:</p>
-              {['Pending', 'Invited', 'Confirmed', 'Scheduled', 'Completed', 'Dropped'].map(s => (
-                <button 
-                  key={s}
-                  onClick={() => handleBulkStatusChange(s as any)}
-                  disabled={isBulkUpdating}
-                  className="px-5 py-2.5 rounded-full text-[11px] font-display font-extrabold uppercase tracking-widest bg-[var(--ink-700)] hover:bg-[var(--gc-purple)] hover:text-white transition-colors border border-transparent disabled:opacity-50"
-                >
-                  {s}
-                </button>
-              ))}
-           </div>
-
-           <div className="pl-6 border-l border-[var(--ink-700)] flex items-center gap-3">
-              <button 
-                onClick={() => setSelectedIds([])}
-                className="w-10 h-10 flex items-center justify-center rounded-full bg-[var(--ink-700)] text-[var(--ink-300)] hover:text-white hover:bg-[var(--danger)] transition-colors"
-                title="Cancel selection"
-              >
-                <X size={18} />
-              </button>
-           </div>
-           
-           {isBulkUpdating && (
-             <div className="absolute inset-x-0 -bottom-1 px-4">
-                <div className="h-[3px] w-full bg-[var(--ink-700)] rounded-full overflow-hidden">
-                   <div className="h-full bg-[var(--gc-purple)] animate-pulse" style={{ width: '100%' }} />
+      {/* Floating Bulk Action Toolbar for Campaign Phase Shifts */}
+      <AnimatePresence>
+        {selectedIds.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 50, scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white p-5 rounded-3xl shadow-2xl flex flex-col md:flex-row items-center gap-5 border border-slate-700/80 max-w-5xl w-[92%] backdrop-blur-xl"
+          >
+            {/* Selected Count & Selection Controls */}
+            <div className="flex items-center gap-3 pr-4 md:border-r border-slate-700 shrink-0 w-full md:w-auto justify-between md:justify-start">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-[var(--gc-purple)] flex items-center justify-center font-extrabold text-sm text-white shadow-md">
+                  {selectedIds.length}
                 </div>
-             </div>
-           )}
-        </div>
-      )}
+                <div>
+                  <p className="text-xs font-black uppercase tracking-wider text-white">Creators Selected</p>
+                  <p className="text-[10px] text-slate-400 font-mono">Of {sortedInfluencers.length} in active view</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={toggleSelectAll}
+                  className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-[10px] font-bold text-slate-300 rounded-lg transition-colors"
+                >
+                  {selectedIds.length === sortedInfluencers.length ? 'Deselect All' : 'Select All'}
+                </button>
+              </div>
+            </div>
+
+            {/* Campaign Phase Batch Controls */}
+            <div className="flex-1 flex flex-col gap-2 w-full">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Layers size={14} className="text-[var(--gc-orange)]" />
+                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-300">
+                    Move Selected to Campaign Phase
+                  </span>
+                </div>
+                <span className="text-[10px] text-slate-400 font-mono hidden lg:inline">
+                  Select target phase below
+                </span>
+              </div>
+
+              {/* Quick Phase Action Buttons */}
+              <div className="flex flex-wrap items-center gap-1.5">
+                {CAMPAIGN_PHASES.map((phase) => (
+                  <button
+                    key={phase.key}
+                    onClick={() => handleBulkStatusChange(phase.key)}
+                    disabled={isBulkUpdating}
+                    title={phase.description}
+                    className={cn(
+                      "px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all border flex items-center gap-1.5 disabled:opacity-50",
+                      phase.badgeColor,
+                      phase.hoverBg,
+                      "hover:scale-105 active:scale-95 shadow-sm"
+                    )}
+                  >
+                    <span className="w-4 h-4 rounded-md bg-slate-900/60 flex items-center justify-center font-mono text-[9px] font-black">
+                      {phase.phaseNumber}
+                    </span>
+                    <span>{phase.key}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Dropdown Selector & Direct Action */}
+            <div className="flex items-center gap-2 pr-4 md:border-r border-slate-700 shrink-0 w-full md:w-auto justify-end">
+              <select
+                value={targetPhase}
+                onChange={(e) => setTargetPhase(e.target.value as any)}
+                className="px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs font-bold text-slate-200 outline-none cursor-pointer focus:ring-2 focus:ring-[var(--gc-purple)]"
+              >
+                {CAMPAIGN_PHASES.map(p => (
+                  <option key={p.key} value={p.key}>{p.phaseNumber}. {p.label}</option>
+                ))}
+              </select>
+
+              <button
+                onClick={() => handleBulkStatusChange(targetPhase)}
+                disabled={isBulkUpdating}
+                className="px-4 py-2 bg-[var(--gc-purple)] hover:bg-purple-700 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-md disabled:opacity-50 shrink-0"
+              >
+                <span>Shift Phase</span>
+                <ArrowRight size={14} />
+              </button>
+            </div>
+
+            {/* Right Tools & Clear Selection */}
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={handleExportSelected}
+                className="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl transition-all"
+                title="Export Selected to CSV"
+              >
+                <Download size={16} />
+              </button>
+
+              <button
+                onClick={() => setSelectedIds([])}
+                className="p-2.5 bg-slate-800 hover:bg-rose-900/50 text-slate-400 hover:text-rose-300 rounded-xl transition-all"
+                title="Clear Selection"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Animated Loading Bar */}
+            {isBulkUpdating && (
+              <div className="absolute inset-x-0 -bottom-1 px-4">
+                <div className="h-[3px] w-full bg-slate-800 rounded-full overflow-hidden">
+                  <div className="h-full bg-[var(--gc-purple)] animate-pulse" style={{ width: '100%' }} />
+                </div>
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="command-card shadow-sm border border-[var(--border)] bg-white overflow-hidden">
         <div className="p-6 border-b border-[var(--border)] flex flex-col gap-6 bg-[var(--bg)]/50">
@@ -287,11 +493,11 @@ export default function InfluencerList() {
                        {selectedIds.length === sortedInfluencers.length && sortedInfluencers.length > 0 
                          ? <CheckSquare size={20} className="text-[var(--gc-purple)]" /> 
                          : <Square size={20} className="text-[var(--ink-300)]" />}
-                     </button>
+                      </button>
                   </th>
                   <th className="grid-header-cell border-b border-[var(--border)] py-4"><SortableHeader label="Influencer Identity" sortKey="username" /></th>
                   <th className="grid-header-cell border-b border-[var(--border)] py-4"><SortableHeader label="Platform" sortKey="platform" /></th>
-                  <th className="grid-header-cell border-b border-[var(--border)] py-4"><SortableHeader label="Operational Status" sortKey="status" /></th>
+                  <th className="grid-header-cell border-b border-[var(--border)] py-4"><SortableHeader label="Operational Phase" sortKey="status" /></th>
                   <th className="grid-header-cell border-b border-[var(--border)] py-4"><SortableHeader label="City / Market" sortKey="city" /></th>
                   <th className="grid-header-cell border-b border-[var(--border)] pr-6 text-right py-4">Actions</th>
                 </tr>
@@ -356,7 +562,7 @@ export default function InfluencerList() {
                            "bg-[var(--bg)] text-[var(--ink-700)] border-[var(--border-strong)] hover:bg-[var(--ink-100)]"
                          )}
                        >
-                         {['Pending', 'Invited', 'Confirmed', 'Scheduled', 'Completed', 'Dropped'].map(s => <option key={s} value={s}>{s}</option>)}
+                         {CAMPAIGN_PHASES.map(p => <option key={p.key} value={p.key}>{p.phaseNumber}. {p.key}</option>)}
                        </select>
                     </td>
                     <td className="px-6 py-5">
@@ -435,3 +641,4 @@ export default function InfluencerList() {
     </div>
   );
 }
+
